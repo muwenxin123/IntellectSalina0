@@ -1,0 +1,243 @@
+[巡检对接文档.md](https://github.com/user-attachments/files/26208151/default.md)
+\# 巡检图像识别插件对接文档
+
+
+
+\## 1. 概述
+
+AI视频分析服务通过WebSocket协议提供实时视频流分析和目标检测功能。支持多路视频流同时分析，检测结果实时返回。
+
+
+
+\## 2. 服务启动
+
+
+
+\### 2.1 初始化服务
+
+```cpp
+
+//启动AI视频分析服务
+
+m\_pAIWebSocketClient->StartMultiStreamAI("192.168.1.138");
+
+```
+
+
+
+\### 2.2 服务参数
+
+AI服务器地址:192.168.1.138
+
+视频流数量:5路
+
+docker服务端口范围:19090\~19094(对应fix0\~fix4)
+
+
+
+\## 3. 视频流配置
+
+
+
+|流ID	   |RTSP地址	                                                                       						|  服务端口
+
+|v1	   |rtsp://192.168.1.138:8554/live/qjd	                      					|	 19090
+
+|v2	   |rtsp://192.168.1.138:8554/live/right\_11	             					|	 19091
+
+|v3	   |rtsp://192.168.1.138:8554/live/AgriculturalPatrol   					|	 19092
+
+|v4	   |rtsp://192.168.1.119/554	                                      					|	 19093
+
+|v5	   |rtsp://admin:lysd2018@192.168.1.72:554/h264/ch1/main/av\_stream	|	 19094
+
+
+
+\## 4. 消息协议
+
+
+
+\### 4.1 控制消息（发送到服务器）
+
+```json
+
+{
+
+&#x20;   "op": "toggle",
+
+&#x20;   "model": "模型名称.pt",
+
+&#x20;   "enabled": true/false
+
+}
+
+```
+
+\### 实例:
+
+// 启用v1流的helmet检测模型
+
+QJsonObject json;
+
+json\["op"] = "toggle";
+
+json\["model"] = "helmet.pt";
+
+json\["enabled"] = true;
+
+
+
+AIWebSocketClient::SendWsMsg("v1", QJsonDocument(json).toJson());
+
+（代码具体位置在ISelectYoloModelDialog.h中的on\_buttomButton\_clicked函数中）
+
+
+
+\### 4.2 检测结果（接收格式）
+
+
+
+&#x20;   格式：二进制消息
+
+&#x20;   结构：图像数据 + JSON元数据
+
+&#x20;   内容：包含检测框、多边形、标签等信息
+
+
+
+\## 5. 接口函数
+
+
+
+\### 5.1 事件通知
+
+
+
+```cpp
+
+// 检测到目标时触发
+
+LY\_AgriVideoPlayer::Get().updateEventData(eventData);
+
+
+
+// 接收检测数据
+
+LY\_AgriVideoPlayer::Get().updateDetectionData(detectionData);
+
+
+
+// 更新数据结果
+
+LY\_AgriVideoPlayer::Get().updateDataResult(eventData);
+
+```
+
+\### 5.2 事件数据结构
+
+```cpp
+
+struct EventData {
+
+&#x20;   QImage image;          // 检测图像
+
+&#x20;   QTime time;           // 检测时间
+
+&#x20;   int type;            // 事件类型
+
+&#x20;   std::string videoid; // 视频流ID
+
+&#x20;   QString eventcontent;// 事件描述
+
+};
+
+```
+
+\## 6. 模型配置
+
+
+
+\### 6.1 模型文件
+
+
+
+&#x20;   配置文件：../data/models.xml
+
+&#x20;   支持格式：.pt,
+
+&#x20;   配置示例：
+
+<model>helmet.pt</model>
+
+<model>landing\_site.pt</model>
+
+<model>oiltank.pt</model>
+
+
+
+\### 6.2 模型切换
+
+
+
+支持动态切换检测模型，通过发送控制消息实现。
+
+
+
+\## 7. UI组件
+
+
+
+\### 7.1 视频显示组件
+
+
+
+&#x20;   CameraWidget：单路视频显示
+
+&#x20;   UAVAgriVideoDialogList：多路视频列表
+
+
+
+\### 7.2 结果显示组件
+
+
+
+&#x20;   EventRecord：事件记录表格
+
+&#x20;   DataResult：检测结果展示
+
+
+
+\## 8. 配置项说明
+
+\### 8.1 连接参数
+
+
+
+// WebSocket连接参数
+
+query.addQueryItem("stride", "1");                    // 帧采样间隔
+
+query.addQueryItem("only\_when\_detected", "false");    // 仅检测时发送
+
+query.addQueryItem("jpeg\_quality", "95");            // 图像质量
+
+
+
+\### 8.2 性能参数
+
+
+
+&#x20;   图像质量：95%
+
+&#x20;   检测频率：实时（stride=1）
+
+&#x20;   传输延迟：< 500ms
+
+
+
+版本: v1.0
+
+最后更新: 2026年2月
+
+联系人: \[薛冠文]
+
