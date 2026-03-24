@@ -21,6 +21,7 @@
 ---
 
 ## 系统架构
+
 LY_AgriVideoPlayer (主控制器)
 ├── CameraWidget (视频窗口 ×5)
 ├── AIWebSocketClient (WebSocket通信)
