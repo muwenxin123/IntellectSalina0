@@ -1,0 +1,627 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QDlgUserManage</class>
+ <widget class="QDialog" name="QDlgUserManage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>798</width>
+    <height>539</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>870</width>
+    <height>630</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>UserManager</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <property name="sizeConstraint">
+    <enum>QLayout::SetDefaultConstraint</enum>
+   </property>
+   <item row="0" column="0">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tabUserManage">
+      <attribute name="title">
+       <string>User Management</string>
+      </attribute>
+      <widget class="QPushButton" name="pbtnAdd">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>430</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Add</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pbtDelete">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>430</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Delete</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lbUserName">
+       <property name="geometry">
+        <rect>
+         <x>260</x>
+         <y>30</y>
+         <width>30</width>
+         <height>12</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>User:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lbUserType">
+       <property name="geometry">
+        <rect>
+         <x>500</x>
+         <y>30</y>
+         <width>30</width>
+         <height>12</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Role:</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="ledtUserName">
+       <property name="geometry">
+        <rect>
+         <x>310</x>
+         <y>30</y>
+         <width>113</width>
+         <height>20</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="ledtUserType">
+       <property name="geometry">
+        <rect>
+         <x>540</x>
+         <y>30</y>
+         <width>113</width>
+         <height>20</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lbUserDescribe">
+       <property name="geometry">
+        <rect>
+         <x>260</x>
+         <y>90</y>
+         <width>102</width>
+         <height>12</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>User Description:</string>
+       </property>
+      </widget>
+      <widget class="QTextEdit" name="tedtUserDescribe">
+       <property name="geometry">
+        <rect>
+         <x>260</x>
+         <y>120</y>
+         <width>411</width>
+         <height>151</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lbLimitSet">
+       <property name="geometry">
+        <rect>
+         <x>260</x>
+         <y>300</y>
+         <width>54</width>
+         <height>12</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Permissions Settings:</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="ckbCMD">
+       <property name="geometry">
+        <rect>
+         <x>260</x>
+         <y>330</y>
+         <width>125</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Command Subsystem</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="ckbIntelligence">
+       <property name="geometry">
+        <rect>
+         <x>410</x>
+         <y>330</y>
+         <width>155</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Intelligence Subsystem</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="ckbCooperate">
+       <property name="geometry">
+        <rect>
+         <x>590</x>
+         <y>330</y>
+         <width>149</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Coordinated Subsystem</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="ckbCombat">
+       <property name="geometry">
+        <rect>
+         <x>260</x>
+         <y>380</y>
+         <width>119</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Combat Subsystem</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="ckbCommunicate">
+       <property name="geometry">
+        <rect>
+         <x>410</x>
+         <y>380</y>
+         <width>161</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Communication Subsystem</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="ckbSupport">
+       <property name="geometry">
+        <rect>
+         <x>590</x>
+         <y>380</y>
+         <width>143</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Guaranteed Subsystem</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pbtnApply">
+       <property name="geometry">
+        <rect>
+         <x>470</x>
+         <y>430</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Apply</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pbtnClose">
+       <property name="geometry">
+        <rect>
+         <x>580</x>
+         <y>430</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Close</string>
+       </property>
+      </widget>
+      <widget class="QListView" name="lvUserList">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>40</y>
+         <width>231</width>
+         <height>371</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lbusetList">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>60</width>
+         <height>12</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>User List:</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pbtnModify">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>430</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Edit</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tabUsetTypeManage">
+      <attribute name="title">
+       <string>Role Management</string>
+      </attribute>
+      <widget class="QLabel" name="lbMenberList">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>54</width>
+         <height>12</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Users:</string>
+       </property>
+      </widget>
+      <widget class="QListView" name="lvMemberList">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>41</y>
+         <width>201</width>
+         <height>371</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pbtnAddMenber">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>430</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Add</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pbtnDeleteMember">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>430</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Delete</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lbMemberName">
+       <property name="geometry">
+        <rect>
+         <x>260</x>
+         <y>70</y>
+         <width>60</width>
+         <height>12</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Role Name:</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="ledtTypeName">
+       <property name="geometry">
+        <rect>
+         <x>330</x>
+         <y>70</y>
+         <width>241</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lbLimitSet2">
+       <property name="geometry">
+        <rect>
+         <x>260</x>
+         <y>170</y>
+         <width>126</width>
+         <height>12</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Permissions Settings:</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="cbxCMD">
+       <property name="geometry">
+        <rect>
+         <x>260</x>
+         <y>220</y>
+         <width>125</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Command Subsystem</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="cbxIntelligence">
+       <property name="geometry">
+        <rect>
+         <x>410</x>
+         <y>220</y>
+         <width>155</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Intelligence Subsystem</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="cbxCooperate">
+       <property name="geometry">
+        <rect>
+         <x>590</x>
+         <y>220</y>
+         <width>149</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Coordinated Subsystem</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="cbxCombat">
+       <property name="geometry">
+        <rect>
+         <x>260</x>
+         <y>290</y>
+         <width>119</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Combat Subsystem</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="cbxCommunicate">
+       <property name="geometry">
+        <rect>
+         <x>410</x>
+         <y>290</y>
+         <width>161</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Communication Subsystem</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="cbxSupport">
+       <property name="geometry">
+        <rect>
+         <x>590</x>
+         <y>290</y>
+         <width>143</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Guaranteed Subsystem</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pbtnApply2">
+       <property name="geometry">
+        <rect>
+         <x>470</x>
+         <y>430</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Apply</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pbtnCancel2">
+       <property name="geometry">
+        <rect>
+         <x>580</x>
+         <y>430</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Close</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tabModifyPWD">
+      <attribute name="title">
+       <string>Change Password</string>
+      </attribute>
+      <widget class="QWidget" name="layoutWidget1">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>80</y>
+         <width>411</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="lbOldPWD">
+          <property name="text">
+           <string>Old Password:    </string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="ledtOldPWD">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="layoutWidget2">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>170</y>
+         <width>521</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <widget class="QLabel" name="lbNewPWD">
+          <property name="text">
+           <string>New Password:    </string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="ledtNewPWD">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QCheckBox" name="ckbShowPWD">
+          <property name="text">
+           <string>Show Password</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="layoutWidget3">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>260</y>
+         <width>411</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="0" column="0">
+         <widget class="QLabel" name="lbConfirmPWD">
+          <property name="text">
+           <string>Confirm Password:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="ledtConformPWD">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QPushButton" name="pbtApply">
+       <property name="geometry">
+        <rect>
+         <x>470</x>
+         <y>430</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Apply</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pbtClose">
+       <property name="geometry">
+        <rect>
+         <x>580</x>
+         <y>430</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Close</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

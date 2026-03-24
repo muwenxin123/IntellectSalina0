@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog</class>
+ <widget class="QWidget" name="UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>716</width>
+    <height>524</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QGroupBox" name="groupBox_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode">
+     <property name="title">
+      <string>Guided Mode</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_SelectVehicle">
+          <property name="text">
+           <string>Vehicle:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="comboBox_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_SelectVehicle"/>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_SelectVehicle_Tip">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="label_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_ChangeAltitude_Altitude">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;altitudeChange&lt;/p&gt;&lt;p&gt;If &amp;gt; 0, go up by amount specified, &lt;/p&gt;&lt;p&gt;if &amp;lt; 0, go down by amount specified&lt;/p&gt;&lt;p&gt;Pause : pause vehicle prior to altitude change&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Altitude:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="doubleSpinBox_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_ChangeAltitude_Altitude">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;altitudeChange&lt;/p&gt;&lt;p&gt;If &amp;gt; 0, go up by amount specified, &lt;/p&gt;&lt;p&gt;if &amp;lt; 0, go down by amount specified&lt;/p&gt;&lt;p&gt;Pause : pause vehicle prior to altitude change&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="minimum">
+           <double>-1000000.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>1000000.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_ChangeAltitude_Pause">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;altitudeChange&lt;/p&gt;&lt;p&gt;If &amp;gt; 0, go up by amount specified, &lt;/p&gt;&lt;p&gt;if &amp;lt; 0, go down by amount specified&lt;/p&gt;&lt;p&gt;Pause : pause vehicle prior to altitude change&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Pause</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_ChangeAltitude_Altitude">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;altitudeChange&lt;/p&gt;&lt;p&gt;If &amp;gt; 0, go up by amount specified, &lt;/p&gt;&lt;p&gt;if &amp;lt; 0, go down by amount specified&lt;/p&gt;&lt;p&gt;Pause : pause vehicle prior to altitude change&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="text">
+           <string>Change Altitude</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation">
+        <property name="title">
+         <string>Goto Location</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_Longitude">
+           <property name="text">
+            <string>Longitude:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_Latitude">
+           <property name="text">
+            <string>Latitude:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QCheckBox" name="checkBox_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_Altitude_ChangeAltitudeRelative">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;vehicle to move to specified location (altitude is included and relative)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Change Altitude(Relative)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="2">
+          <widget class="QPushButton" name="pushButton_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_FlyGoto">
+           <property name="text">
+            <string>Fly Goto</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QPushButton" name="pushButton_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_MapGetPositions">
+           <property name="toolTip">
+            <string>Double click map getting position from map.</string>
+           </property>
+           <property name="text">
+            <string>Start Getting Position</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBox_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_Longitude">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="decimals">
+            <number>7</number>
+           </property>
+           <property name="minimum">
+            <double>-360.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>360.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_Altitude">
+           <property name="text">
+            <string>Altitude:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBox_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_Altitude">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimum">
+            <double>-1000000.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1000000.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBox_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_Latitude">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="decimals">
+            <number>7</number>
+           </property>
+           <property name="minimum">
+            <double>-360.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_FlyGoto_List">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QLabel" name="label_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_Altitude_Name_3">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_Longitude_3">
+         <property name="text">
+          <string> Longitude:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_Longitude_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="decimals">
+          <number>7</number>
+         </property>
+         <property name="minimum">
+          <double>-360.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>360.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_Latitude_3">
+         <property name="text">
+          <string> Latitude:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_Latitude_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="decimals">
+          <number>7</number>
+         </property>
+         <property name="minimum">
+          <double>-360.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_Altitude_3">
+         <property name="text">
+          <string> Altitude:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_Altitude_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimum">
+          <double>-1000000.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>1000000.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QLabel" name="label_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_Altitude_Name_2">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_Longitude_2">
+         <property name="text">
+          <string> Longitude:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_Longitude_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="decimals">
+          <number>7</number>
+         </property>
+         <property name="minimum">
+          <double>-360.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>360.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_Latitude_2">
+         <property name="text">
+          <string> Latitude:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_Latitude_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="decimals">
+          <number>7</number>
+         </property>
+         <property name="minimum">
+          <double>-360.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_Altitude_2">
+         <property name="text">
+          <string> Altitude:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_UAVFlyManage_MavlinkVehicleGuidedModeGotoLocationDialog_GuidedMode_GotoLocation_Altitude_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimum">
+          <double>-1000000.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>1000000.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

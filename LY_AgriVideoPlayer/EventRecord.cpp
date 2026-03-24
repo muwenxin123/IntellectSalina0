@@ -6,6 +6,9 @@
 #include "QCString.h"
 #include "ModelProcessor.h"
 #include "QTimer"
+#include <QThread>
+#include <qDebug>
+#include <QScrollBar>
 EventRecord::EventRecord(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::EventRecord)
@@ -20,6 +23,15 @@ EventRecord::EventRecord(QWidget *parent) :
 
 EventRecord::~EventRecord()
 {
+	// 先停止定时器
+	if (m_timer) {
+		m_timer->stop();
+		m_timer->deleteLater();
+		m_timer = nullptr;
+	}
+
+	// 等待所有pending的事件
+	//QCoreApplication::processEvents();
     delete ui;
 }
 
@@ -145,38 +157,127 @@ void EventRecord::AddtableWidget(std::vector<bbox_t> a, const VideoInfoData vide
 	}
 }
 
-//void EventRecord::setEventData(WS::EventData data)
+
+
+//void EventRecord::setEventData(const WS::EventData& data)
 //{
-//	eventdatavec.push_back(data);
-//	int i = 0;
-//	int row = ui->tableWidget->rowCount(); //获取当前行数
-//	ui->tableWidget->insertRow(row); //插入新行
-//	//ui->tableWidget->setItem(row, 0, new QTableWidgetItem(eventdatavec[i].time.toString()));
-//	//ui->tableWidget->setItem(row, 1, new QTableWidgetItem(eventdatavec[i].eventcontent));
-//	i++;
-//	update();
+//	//qDebug() << "=== setEventData 调用 ===";
+//	//qDebug() << "调用线程ID:" << QThread::currentThreadId();
+//	//qDebug() << "调用线程对象:" << QThread::currentThread();
+//	//qDebug() << "UI线程对象:" << this->thread();
+//	//qDebug() << "是否是UI线程:" << (QThread::currentThread() == this->thread());
+//
+//	////QReadLocker lk(&m_readLock);
+//	//QWriteLocker lk(&m_readLock);
+//	//// 添加到事件向量（在开头插入，保持最新数据在最前面）
+//	//eventdatavec.push_back(data);
+//	//if (eventdatavec.size() > 100)
+//	//{
+//	//	eventdatavec.erase(eventdatavec.begin());
+//	//}
+//	////onDetectionDataReceived();
+//
+//	QWriteLocker locker(&m_readLock);
+//
+//	eventdatavec.insert(eventdatavec.begin(), data);//头部插入
+//
+//	if (eventdatavec.size() > 100)
+//	{
+//		eventdatavec.pop_back();//尾部删除
+//	}
+//	QMetaObject::invokeMethod(this, &EventRecord::onDetectionDataReceived, Qt::QueuedConnection);
+//}
+
+// EventRecord.cpp - 修改 setEventData
+//void EventRecord::setEventData(const WS::EventData& data)
+//{
+//	// 先检查对象是否有效
+//	if (!this) {
+//		qCritical() << "无效的 EventRecord 对象!";
+//		return;
+//	}
+//
+//	
+//	if (QThread::currentThread() != this->thread()) {
+//		qDebug() << "跨线程调用 setEventData，使用异步方式";
+//
+//		// 复制数据，避免引用问题
+//		WS::EventData dataCopy = data;
+//
+//		QMetaObject::invokeMethod(this, [this, dataCopy]() {
+//			QWriteLocker locker(&m_readLock);
+//			eventdatavec.insert(eventdatavec.begin(), dataCopy);
+//
+//			if (eventdatavec.size() > 100) {
+//				eventdatavec.pop_back();
+//			}
+//
+//			// 立即更新UI
+//			this->updateTable(eventdatavec);
+//		}, Qt::QueuedConnection);
+//	}
+//	else {
+//		// 在主线程直接执行
+//		QWriteLocker locker(&m_readLock);
+//		eventdatavec.insert(eventdatavec.begin(), data);
+//
+//		if (eventdatavec.size() > 100) {
+//			eventdatavec.pop_back();
+//		}
+//
+//		updateTable(eventdatavec);
+//	}
 //}
 
 void EventRecord::setEventData(const WS::EventData& data)
 {
-	//QReadLocker lk(&m_readLock);
-	QWriteLocker lk(&m_readLock);
-	// 添加到事件向量（在开头插入，保持最新数据在最前面）
-	eventdatavec.push_back(data);
-	if (eventdatavec.size() > 100)
-	{
-		eventdatavec.erase(eventdatavec.begin());
-	}
-	//onDetectionDataReceived();
-}
+	// 检查对象是否已被销毁？无法通过 this 检查，但可以借助 QPointer 或弱引用，但这里简化。
+	// 如果 EventRecord 可能被销毁而仍有调用，应使用 QPointer 保护。
+	// 但为简洁，我们假设调用时对象有效。
 
+	if (QThread::currentThread() != this->thread()) {
+		qDebug() << "跨线程调用 setEventData，使用异步方式";
+
+		// 复制数据，避免引用问题
+		WS::EventData dataCopy = data;
+
+		bool success = QMetaObject::invokeMethod(this, [this, dataCopy]() {
+			QWriteLocker locker(&m_readLock);
+			eventdatavec.insert(eventdatavec.begin(), dataCopy);
+
+			if (eventdatavec.size() > 100) {
+				eventdatavec.pop_back();
+			}
+
+			// 立即更新UI（假设对象在GUI线程）
+			this->updateTable(eventdatavec);
+		}, Qt::QueuedConnection);
+
+		if (!success) {
+			qWarning() << "QMetaObject::invokeMethod 失败，数据可能丢失";
+			// 可选：尝试直接在当前线程执行（但需确保线程安全且UI操作不会跨线程）
+			// 如果当前线程不是GUI线程，直接调用updateTable可能导致UI问题，所以不推荐。
+		}
+	}
+	else {
+		// 在主线程直接执行
+		QWriteLocker locker(&m_readLock);
+		eventdatavec.insert(eventdatavec.begin(), data);
+
+		if (eventdatavec.size() > 100) {
+			eventdatavec.pop_back();
+		}
+
+		updateTable(eventdatavec);
+	}
+}
 void EventRecord::AddtableWidget2(std::vector<bbox_t> a,const char* str) {
 	for (const auto& data : a) {
 		ui->tableWidget->setItem(1, 2, new QTableWidgetItem(str));
 	}
 }
 
-struct  DetectionData 
+struct DetectionData 
 {
 	//来自YOLO的bbox_t核心字段
 	float x, y, w, h; //边界框坐标
@@ -320,27 +421,43 @@ void EventRecord::onDetectionDataReceived()
 	//}
 	QReadLocker lk(&m_readLock);
 	std::vector<WS::EventData> tempVec = eventdatavec;
-	lk.unlock();
-	ui->tableWidget->clearContents();
-	int nR = ui->tableWidget->rowCount();
-	int row = 0;
-	for (auto mitor = tempVec.rbegin(); mitor != tempVec.rend();mitor++)
-	{
-		if (row >= nR)
-		{
-			ui->tableWidget->insertRow(row); //插入新行
-		}
-		// 设置时间列
-		ui->tableWidget->setItem(row, 0, new QTableWidgetItem(mitor->time.toString("hh::mm::ss")));
+	if (QThread::currentThread() == this->thread()) {
+		updateTable(tempVec);
+	}
+	else {
+		// 跨线程时使用信号
+		//emit dataReadyForUpdate(tempVec);
+		return;
+	}
+}
 
-		// 设置事件信息列 - 使用 EventData 中的事件内容
-		ui->tableWidget->setItem(row, 1, new QTableWidgetItem(mitor->eventcontent));
-		row++;
+void EventRecord::updateTable(const std::vector<WS::EventData>& data) 
+{
+	//static std::vector<WS::EventData> lastData;
+	//if (data == lastData) {
+	//	return;
+	//}
+	//lastData = data;
+
+
+	int scrollValue = 0;
+	if (ui->tableWidget->verticalScrollBar()) {
+		scrollValue = ui->tableWidget->verticalScrollBar()->value();
 	}
 
-	// 自动滚动到最新行（第一行）
-	//ui->tableWidget->scrollToTop();
+	ui->tableWidget->setRowCount(0);
 
-	// 可选：高亮显示最新行
-	//ui->tableWidget->selectRow(0);
+	for (const auto& event : data) {
+		int row = ui->tableWidget->rowCount();
+		ui->tableWidget->insertRow(row);
+
+		QTableWidgetItem* timeItem = new QTableWidgetItem(event.time.toString("hh:mm:ss"));
+		QTableWidgetItem* contentItem = new QTableWidgetItem(event.eventcontent);
+
+		ui->tableWidget->setItem(row, 0, timeItem);
+		ui->tableWidget->setItem(row, 1, contentItem);
+	}
+	ui->tableWidget->verticalScrollBar()->setValue(scrollValue);
+
+	return;
 }

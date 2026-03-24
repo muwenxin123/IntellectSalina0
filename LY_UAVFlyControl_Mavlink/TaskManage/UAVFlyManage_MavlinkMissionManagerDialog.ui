@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UAVFlyManage_MavlinkMissionManagerDialog</class>
+ <widget class="QWidget" name="UAVFlyManage_MavlinkMissionManagerDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>970</width>
+    <height>571</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>UAVFlyManage_MavlinkMissionManagerDialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTableWidget" name="tableWidget">
+     <property name="showDropIndicator" stdset="0">
+      <bool>false</bool>
+     </property>
+     <property name="dragDropOverwriteMode">
+      <bool>false</bool>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::SingleSelection</enum>
+     </property>
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_UAVFlyManage_MavlinkTaskManage_LineSettings">
+     <property name="title">
+      <string/>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QGroupBox" name="groupBox_VehicleUpDownMissionInfo">
+        <property name="title">
+         <string>航线信息</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_6">
+         <item>
+          <widget class="QLabel" name="label_VehicleUpDownMissionInfo_Count">
+           <property name="text">
+            <string>航点:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_VehicleUpDownMissionInfo_Dist">
+           <property name="text">
+            <string>距离:</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_VehicleUpDownMissionShowHide">
+        <property name="title">
+         <string>航线显隐</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <item>
+          <widget class="QCheckBox" name="checkBox_VehicleUpDownMissionHide">
+           <property name="text">
+            <string>隐藏</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_VehicleUpDownMissionWayPointAltitudeRelative">
+        <property name="title">
+         <string>航点Frame</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_9">
+         <item>
+          <widget class="QComboBox" name="comboBox_VehicleUpDownMissionWayPointAltitudeRelative"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_VehicleUpDownMissionWayPointAltitudeRelative">
+           <property name="text">
+            <string>修改所有</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_VehicleUpDownMissionWayPointAltitude">
+        <property name="title">
+         <string>航点高度</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <widget class="QDoubleSpinBox" name="doubleSpinBox_VehicleUpDownMissionWayPointAltitude">
+           <property name="minimum">
+            <double>-10000000.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>10000000.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>20.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_VehicleUpDownMissionWayPointAltitude">
+           <property name="text">
+            <string>修改所有</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_VehicleUpDownMissionWayPointSpeed">
+        <property name="title">
+         <string>航点速度</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_7">
+         <item>
+          <widget class="QDoubleSpinBox" name="doubleSpinBox_VehicleUpDownMissionWayPointSpeed">
+           <property name="maximum">
+            <double>10000000.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>5.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_VehicleUpDownMissionWayPointSpeed">
+           <property name="text">
+            <string>修改所有</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_VehicleUpDownMissionWayPointRadius">
+        <property name="title">
+         <string>航点半径</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QDoubleSpinBox" name="doubleSpinBox_VehicleUpDownMissionWayPointRadius">
+           <property name="maximum">
+            <double>10000000.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>20.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_VehicleUpDownMissionWayPointRadius">
+           <property name="text">
+            <string>修改所有</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_VehicleUpDownMissionWayPointHoldTime">
+        <property name="title">
+         <string>悬停时间</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_8">
+         <item>
+          <widget class="QSpinBox" name="spinBox_VehicleUpDownMissionWayPointHoldTime">
+           <property name="maximum">
+            <number>10000000</number>
+           </property>
+           <property name="value">
+            <number>5</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_VehicleUpDownMissionWayPointHoldTime">
+           <property name="text">
+            <string>修改所有</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_VehicleUpDownMissionLoiterRadius">
+        <property name="title">
+         <string>盘旋半径</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QDoubleSpinBox" name="doubleSpinBox_VehicleUpDownMissionLoiterRadius">
+           <property name="maximum">
+            <double>10000000.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>20.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_VehicleUpDownMissionLoiterRadius">
+           <property name="text">
+            <string>修改所有</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_VehicleUpDownMissionProgress">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="title">
+      <string>航点上传/下载进度</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_10">
+      <item>
+       <widget class="QProgressBar" name="progressBar_VehicleUpDownMissionProgress">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_VehicleUpDownMissionProgressInfo">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

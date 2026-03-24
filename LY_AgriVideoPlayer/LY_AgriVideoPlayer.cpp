@@ -32,6 +32,9 @@
 #include "UAVAgriVideoDialogList.h"
 #include "IAgriVideoPlayerStateDialog.h"
 #include "ISelectYoloModelDialog.h"
+#include "AIWebSocketClient.h"
+#include "DataResult.h"
+#include "StatisticsCard.h"
 //#include "IAgriVideoPlayerDJIDialog.h"
 #include "PartMap.h"
 Q_DECLARE_METATYPE(qnzkna::framework::IRegistry *)
@@ -49,8 +52,68 @@ LY_AgriVideoPlayer:: LY_AgriVideoPlayer()
 
 LY_AgriVideoPlayer::~LY_AgriVideoPlayer()
 {
+	// 设置全局退出标志，关闭连接
+	AIWebSocketClient::setApplicationShuttingDown();
+	AIWebSocketClient::CleanupAllConnections();
+
+	// 等待处理完成（考虑更健壮的方式）
+	QThread::msleep(500);
+
+	// 删除需要手动管理的资源
+	delete m_pDataResult;
+	delete m_pEventRecord;
+	delete m_pAIWebSocketClient;   
+	delete m_pView1;                
+	delete m_pView2;
+	delete m_pView3;
+	delete m_pView4;
+	delete m_pView5;
+
+	m_videoWidget.clear();
+
+	// 清理 m_videoConfig（只删一次）
+	delete m_videoConfig;
 	m_videoConfig = nullptr;
+
+	qDebug() << "LY_AgriVideoPlayer 析构完成";
 }
+
+//LY_AgriVideoPlayer::~LY_AgriVideoPlayer()
+//{
+//	m_videoConfig = nullptr;
+//	delete m_videoConfig;
+//	qDebug() << "LY_AgriVideoPlayer 开始析构";
+//
+//	// 1. 先设置全局退出标志（需要在 AIWebSocketClient 中添加）
+//	AIWebSocketClient::setApplicationShuttingDown();
+//
+//	// 2. 先关闭 WebSocket 连接，停止接收新消息
+//	AIWebSocketClient::CleanupAllConnections();
+//
+//	// 3. 给一点时间让正在处理的消息完成
+//	QThread::msleep(500);
+//
+//	// 4. 主动通知 DataResult 关闭
+//	if (m_pDataResult) {
+//		m_pDataResult->shutdown();  // 提前清理
+//		delete m_pDataResult;  // 安全删除
+//		m_pDataResult = nullptr;
+//	}
+//
+//	// 5. 同样处理 EventRecord
+//	if (m_pEventRecord) {
+//		delete m_pEventRecord;
+//		m_pEventRecord = nullptr;
+//	}
+//
+//	// 6. 清理其他资源
+//	delete m_videoConfig;
+//	m_videoConfig = nullptr;
+//
+//	qDebug() << "LY_AgriVideoPlayer 析构完成";
+//}
+
+
 void LY_AgriVideoPlayer::Reset()
 {
 
@@ -121,11 +184,26 @@ bool LY_AgriVideoPlayer::OnCommand(int nID)
 		if (m_pUAVAgriVideoDialogList)
 		{
 			m_pUAVAgriVideoDialogList->show();
+			m_pUAVAgriVideoDialogList->hide();
+		}
+		
+		if (m_statisticsCard) m_statisticsCard->show();
+		// ?? 关键：当显示UAVAgriVideoDialogList时，隐藏独立窗口
+		if (m_pView1) m_pView1->show();
+		if (m_pView2) m_pView2->hide();
+		if (m_pView3) m_pView3->hide();
+		if (m_pView4) m_pView4->hide();
+		if (m_pView5) m_pView5->hide();
+
+		if (m_pUAVAgriVideoDialogList)
+		{
+			m_pUAVAgriVideoDialogList->show();
 		}
 		if (m_pIAgriVideoPlayerStateDialog)
 		{
 			m_pIAgriVideoPlayerStateDialog->Init(0);
 			m_pIAgriVideoPlayerStateDialog->show();
+			m_pIAgriVideoPlayerStateDialog->hide();
 		}
 		if (m_pISelectYoloModelDialog)
 		{
@@ -133,7 +211,7 @@ bool LY_AgriVideoPlayer::OnCommand(int nID)
 		}
 		if (m_p2DMapView)
 		{
-			m_p2DMapView->hide();
+			m_p2DMapView->show();
 		}
 // 		if (m_pIAgriVideoPlayerDJIDialog)
 // 		{
@@ -153,6 +231,14 @@ bool LY_AgriVideoPlayer::OnCommand(int nID)
 	break;
     default:
 	{
+		// 隐藏视频时，两者都隐藏
+		if (m_pUAVAgriVideoDialogList)
+		{
+			m_pUAVAgriVideoDialogList->hide();
+		}
+
+
+
 		if (m_pUAVAgriVideoDialogList)
 		{
 			m_pUAVAgriVideoDialogList->hide();
@@ -228,6 +314,7 @@ bool LY_AgriVideoPlayer::OnCreate(int wParam, QWidget *pWidget)
     break;
 	case 1000:
 	{
+
 	if (m_pEventRecord == nullptr)
 		{
 			m_pEventRecord = new EventRecord(pWidget);
@@ -243,8 +330,14 @@ bool LY_AgriVideoPlayer::OnCreate(int wParam, QWidget *pWidget)
 		m_pDataResult->hide();
 
 	}
+	
+	if (m_statisticsCard == nullptr) {
+		m_statisticsCard = new StatisticsCard(pWidget);
+		m_statisticsCard->move(QPoint(screenSize.width() * 17 / 20, screenSize.height() / 3));
+		m_statisticsCard->resize(QSize(screenSize.width() * 3 / 20, screenSize.height() / 3));
+		m_statisticsCard->hide();
 
-
+	}
 		if (m_p2DMapView == nullptr)
 		{
 			m_p2DMapView = new QWidget(pWidget, Qt::Window | Qt::FramelessWindowHint);
@@ -271,11 +364,20 @@ bool LY_AgriVideoPlayer::OnCreate(int wParam, QWidget *pWidget)
 			m_pView3 = new CameraWidget(110508);
 			m_pView4 = new CameraWidget(110509);
 			m_pView5 = new CameraWidget(110510);
+			QObject::connect(m_pView1, &CameraWidget::boxClicked, this, &LY_AgriVideoPlayer::onBoxClicked);
+			QObject::connect(m_pView2, &CameraWidget::boxClicked, this, &LY_AgriVideoPlayer::onBoxClicked);
+			QObject::connect(m_pView3, &CameraWidget::boxClicked, this, &LY_AgriVideoPlayer::onBoxClicked);
+			QObject::connect(m_pView4, &CameraWidget::boxClicked, this, &LY_AgriVideoPlayer::onBoxClicked);
+			QObject::connect(m_pView5, &CameraWidget::boxClicked, this, &LY_AgriVideoPlayer::onBoxClicked);
+
 			//StartGdd("192.168.2.100");
 			//StartAI("192.168.1.138");
-			StartMultiStreamAI("192.168.1.138");
+			m_pAIWebSocketClient = new AIWebSocketClient();
+			m_pAIWebSocketClient->StartMultiStreamAI("192.168.1.138");
+
 #endif // GDD
 		}
+
 		if (m_videoConfig)
 		{
 			m_videoWidget.clear();
@@ -338,7 +440,7 @@ bool LY_AgriVideoPlayer::OnCreate(int wParam, QWidget *pWidget)
 			}
 
 			m_pUAVAgriVideoDialogList->move(QPoint(screenSize.width() * 1 / 4, 80));
-			m_pUAVAgriVideoDialogList->resize(QSize(screenSize.width() * 3/4, screenSize.height() - 80/*1160, 640*/));
+			m_pUAVAgriVideoDialogList->resize(QSize(screenSize.width() * 3/5, screenSize.height() *2/ 3/*1160, 640*/));
 			m_pUAVAgriVideoDialogList->hide();
 		}
 		if (nullptr == m_pIAgriVideoPlayerStateDialog)
@@ -412,12 +514,36 @@ EventRecord * LY_AgriVideoPlayer::GetEventRecord()
 // LY_AgriVideoPlayer.cpp
 void LY_AgriVideoPlayer::updateDetectionData(const WS::DetectionData& data)
 {
-	// ?? 调用setData
-	if (m_pView1 && data.metadata.videoid == "v1") m_pView1->setData(data);
-	else if (m_pView2 && data.metadata.videoid == "v2") m_pView2->setData(data);
-	else if (m_pView3 && data.metadata.videoid == "v3") m_pView3->setData(data);
-	else if (m_pView4 && data.metadata.videoid == "v4") m_pView4->setData(data);
-	else if (m_pView5 && data.metadata.videoid == "v5") m_pView5->setData(data);
+	// 调用setData
+	auto configs = AIWebSocketClient::getCurrentStreamConfigs();
+		 if (m_pView1 && data.metadata.videoid == configs[0].streamId.toStdString()) m_pView1->setData(data);
+	else if (m_pView2 && data.metadata.videoid == configs[1].streamId.toStdString()) m_pView2->setData(data);
+	else if (m_pView3 && data.metadata.videoid == configs[2].streamId.toStdString()) m_pView3->setData(data);
+	else if (m_pView4 && data.metadata.videoid == configs[3].streamId.toStdString()) m_pView4->setData(data);
+	else if (m_pView5 && data.metadata.videoid == configs[4].streamId.toStdString()) m_pView5->setData(data);
+
+	//更新统计卡片
+	if (m_statisticsCard && m_statisticsCard->isVisible()) {
+		StatisticsData stats;
+
+		// 从 DetectionData 中提取统计数据
+		for (const auto& bbox : data.bboxes) {
+			// 解析类别名（从 "coco.pt:car" 提取 "car"）
+			QString label = QString::fromStdString(bbox.label);
+			QString className = label.contains(":") ? label.split(":").last() : label;
+			qDebug() << className;
+			stats.classCounts[className]++;
+			stats.avgConfidence[className] += bbox.score;
+			stats.totalCount++;
+		}
+
+
+		// 添加模型信息
+		stats.modelNames << QString::fromStdString(data.metadata.type);  
+
+																		 // 更新统计卡片
+		//m_statisticsCard->updateStatistics(stats);
+	}
 }
 
 void LY_AgriVideoPlayer::updateEventData(const WS::EventData& data)
@@ -454,4 +580,37 @@ void LY_AgriVideoPlayer::updatejson(const QString vid, const QString& modelName,
 
 	m_pAIWebSocketClient->SendWsMsg(vid, QJsonDocument(json).toJson());
 }
+
+void LY_AgriVideoPlayer::onBoxClicked(int videoId, const BoxInfo& boxInfo)
+{
+	qDebug() << "收到框点击信号 - 视频:" << videoId;
+	qDebug() << "  类别:" << boxInfo.className;
+	qDebug() << "  置信度:" << boxInfo.score;
+	qDebug() << "  trackId:" << boxInfo.trackId;
+	qDebug() << "  完整标签:" << QString::fromStdString(boxInfo.bbox.label);
+
+	// 创建事件记录
+	if (m_pEventRecord) {
+		WS::EventData eventData;
+		eventData.time = QTime::currentTime();
+		eventData.type = 2;  // 自定义类型：框点击事件
+		eventData.videoid = std::to_string(videoId);
+
+		// 生成事件内容
+		eventData.eventcontent = QString("点击检测框 - %1 (置信度:%2% 跟踪ID:%3)")
+			.arg(boxInfo.className)
+			.arg(int(boxInfo.score * 100))
+			.arg(boxInfo.trackId);
+
+		m_pEventRecord->setEventData(eventData);
+	}
+
+	// 如果有状态栏对话框，显示信息
+	if (m_pIAgriVideoPlayerStateDialog) {
+		// 注意：IAgriVideoPlayerStateDialog 可能没有 setStatusText 方法
+		// 如果有其他方法可以显示状态，就用那个方法
+		// 或者通过信号槽的方式传递信息
+	}
+}
+
 

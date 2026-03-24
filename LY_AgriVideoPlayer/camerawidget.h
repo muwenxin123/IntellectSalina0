@@ -2,90 +2,79 @@
 #define CAMERAWIDGET_H
 
 #include <QWidget>
-#include <QScreen>
-#include <QThread> 
 #include <QImage>
-#include  <QPushButton>
-#include <QLabel>
-#include <QShowEvent>
-#include <QComboBox>
+#include <QMutex>
 #include <map>
 #include "videothread.h"
-#include "gdd/wsProtocol.h"  // 包含结构体定义
+#include "gdd/wsProtocol.h"
+
 #define EDGE_MARGIN 8
 
 
+struct BoxInfo {
+	QRectF rect;                    // 屏幕坐标的矩形区域
+	WS::BBox bbox;                  // 直接存储原始的 BBox 对象
+	QString className;              // 类别名称（从 label 解析）
+	float score;                    // 置信度 (bbox.score)
+	int trackId;                    // 跟踪ID (bbox.trackId)
+	QString videoId;                // 视频ID (从 metadata.videoid)
+	qint64 timestamp;               // 时间戳
+};
 
 namespace Ui {
-class CameraWidget;
+	class CameraWidget;
 }
 
 class CameraWidget : public QWidget
 {
-    Q_OBJECT
-public slots:
-	void setDataSafely(const WS::DetectionData& data);
+	Q_OBJECT
+
 public:
-    explicit CameraWidget(int videoID , QWidget *parent = nullptr);
-    ~CameraWidget();
+	explicit CameraWidget(int videoID, QWidget *parent = nullptr);
+	~CameraWidget();
 
 	void stopPlay();
 	void startPlay(VideoInfoData videoInfo);
-	void pause(bool state);
-
-	void setModelType(int index);
-
 	void setData(const WS::DetectionData& data);
+	
+	inline int getVideoID() const { return m_videoID; }
+signals:
+	void boxClicked(int videoId, const BoxInfo& boxInfo);  // 框被点击的信号
 
-	inline int getVideoID() {
-		return m_videoID;
-	}
 protected:
+	void closeEvent(QCloseEvent *e) override;
+	void paintEvent(QPaintEvent *e) override;
+	// 注意：showEvent 如果不需要实现，就完全删除声明
+	void mousePressEvent(QMouseEvent *event)override;
 
-	void closeEvent(QCloseEvent *e);
-	void showEvent(QShowEvent *event);
-	void paintRect(QPainter& p);
-	void paintEvent(QPaintEvent *e);
+	private slots:
+	// 只保留实际使用的槽函数
+	void getOneFrame(QImage img);
 
+	// 删除所有不存在的槽函数声明：
+	// void on_status_click();
+	// void onComboBoxIndexChanged(int index);
+	// void closeWidget();
+	// void isRecord();
 
 private:
 	void setVideoInfo(VideoInfoData videoInfo);
+	void paintRect(QPainter& p);
+	void updateBoxesFromData();  // 更新框信息列表
+	const BoxInfo* findBoxAtPosition(const QPoint& pos) const;  // 查找点击位置所在的框
+	void mouseMoveEvent(QMouseEvent *event);
 
 private:
-	QMutex m_dataMutex;
-signals:
-	void dealingMessage();
-
-private slots:
-
-	void getOneFrame(QImage img);
-	void onComboBoxIndexChanged(int index);
-	void closeWidget();
-	void on_status_click();
-	void isRecord();
-
-private:
-    Ui::CameraWidget *ui;
-	//VideoThread *decoderThread = nullptr;
+	Ui::CameraWidget *ui;
 	int m_videoID = 0;
-
 	std::map<int, VideoThread*> m_videoThreadMap;
-
-	enum ResizeDirection {
-		None,
-		TopLeft, Top, TopRight,
-		Left, Right,
-		BottomLeft, Bottom, BottomRight
-	};
-
-	// 判断是否在可调整大小的区域
-	bool isInResizeArea(const QPoint &pos);
-
-	// 根据位置设置对应的光标
-	void setResizeCursor(const QPoint &pos);
-
 	WS::DetectionData m_data;
-};
+	QMutex m_dataMutex;
 
+
+	const BoxInfo* m_hoveredBox;      //悬停的框（注意要用指针）
+
+	QVector<BoxInfo> m_currentBoxes;  // 存储当前帧的所有框信息
+};
 
 #endif // CAMERAWIDGET_H

@@ -1,0 +1,11 @@
+﻿#ifndef LY_AGRIFARMMANAGER_GLOBAL_H_
+#define LY_AGRIFARMMANAGER_GLOBAL_H_
+ 
+#include <QtCore/qglobal.h>
+
+#if defined(LY_AGRIFARMMANAGER_LIBRARY)
+#  define LY_AGRIFARMMANAGERSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define LY_AGRIFARMMANAGERSHARED_EXPORT Q_DECL_IMPORT
+#endif
+#endif  // LY_AgriFarmManager_global_H  

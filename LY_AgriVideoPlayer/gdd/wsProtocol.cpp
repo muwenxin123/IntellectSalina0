@@ -55,6 +55,7 @@ bool DetectionParser::parseFromJson(const nlohmann::json& j, DetectionData &data
 			}
 		}
 
+
 		return true;
     } catch (const std::exception& e) {
         std::cerr << "½âÎöDetectionData´íÎó: " << e.what() << std::endl;
@@ -150,6 +151,10 @@ BBox DetectionParser::parseBBox(const nlohmann::json& j)
         bbox.groupId = j["groupId"];
     }
     
+	if (j.contains("track_id") && j["track_id"].is_number()) {
+		bbox.trackId = j["track_id"];
+	}
+
     return bbox;
 }
 

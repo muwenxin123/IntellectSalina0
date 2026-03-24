@@ -1,0 +1,11 @@
+﻿#ifndef LY_AGRILAYERCONTROL_GLOBAL_H_
+#define LY_AGRILAYERCONTROL_GLOBAL_H_
+ 
+#include <QtCore/qglobal.h>
+
+#if defined(LY_AGRILAYERCONTROL_LIBRARY)
+#  define LY_AGRILAYERCONTROLSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define LY_AGRILAYERCONTROLSHARED_EXPORT Q_DECL_IMPORT
+#endif
+#endif  // LY_AgriLayerControl_global_H

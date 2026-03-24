@@ -11,6 +11,8 @@
 #include "camerawidget.h"
 #include "videoconfig.h"
 #include <memory>
+#include "camerawidget.h" 
+#include <QObject>
 //#include "gdd/GddVedioContainer.h"
 //#include "gdd/WebSocketClient.h"  
 //#include "AIWebSocketClient.h"
@@ -22,10 +24,11 @@ class IAgriVideoPlayerStateDialog;
 class ISelectYoloModelDialog;
 class IAgriVideoPlayerDJIDialog;
 class AIWebSocketClient;
+class StatisticsCard;
 
-class LY_AGRIVIDEOPLAYERSHARED_EXPORT LY_AgriVideoPlayer
+class LY_AGRIVIDEOPLAYERSHARED_EXPORT LY_AgriVideoPlayer : public QObject
 { 
-
+	Q_OBJECT
 public:
 	LY_AgriVideoPlayer();
     ~LY_AgriVideoPlayer();
@@ -81,6 +84,8 @@ public:
 	void updateDataResult(const WS::EventData& data);
 	void updatejson(const QString vid, const QString& modelName, bool enable);
 	void updateDataResultShared(std::shared_ptr<WS::EventData> event);
+	void onBoxDoubleClicked(int videoId, const BoxInfo& boxInfo);
+
 	//bool StartMultipleAI(const char *lpszHost);
 	//void updateRectimage(QPainter p);
 private:
@@ -101,12 +106,14 @@ private:
 	CameraWidget* m_pView3 = nullptr;
 	CameraWidget* m_pView4 = nullptr;
 	CameraWidget* m_pView5 = nullptr;
+	StatisticsCard* m_statisticsCard = nullptr;
 
 public:
 	AIWebSocketClient *m_pAIWebSocketClient = nullptr;
 	ISelectYoloModelDialog *m_pISelectYoloModelDialog = nullptr;
 	EventRecord *m_pEventRecord = nullptr;
 	DataResult *m_pDataResult = nullptr;
+
 	
 	// // 新增：根据窗口ID更新数据
  //   void updateDetectionDataByWindowId(const WS::DetectionData& data, int windowId);
@@ -124,6 +131,10 @@ private:
 //// 🔴 添加视频ID到窗口的映射
 //	std::map<QString, CameraWidget*> m_videoToWindowMap;
     QWidget* m_p2DMapView;//二维地图小界面
+
+	public slots:
+	void onBoxClicked(int videoId, const BoxInfo& boxInfo);
+	//void onBoxDoubleClicked(int videoId, const BoxInfo& boxInfo);
 };
 
 inline LY_AgriVideoPlayer &LY_AgriVideoPlayer::Get()

@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/TaskManage">
+        <file>state_red.png</file>
+        <file>state_blue.png</file>
+    </qresource>
+</RCC>

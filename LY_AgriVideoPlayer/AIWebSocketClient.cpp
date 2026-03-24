@@ -15,12 +15,48 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QUrlQuery>
+#include <atomic>
+
 using json = nlohmann::json;
+
+// 全局安全标志
+static std::atomic<bool> g_isApplicationRunning(true);
+
+// 提供一个函数来设置标志
+void AIWebSocketClient::setApplicationShuttingDown()
+{
+	g_isApplicationRunning = false;
+}
 
 AIWebSocketClient::~AIWebSocketClient()
 {
-
+	if (m_webSocket) {
+		m_webSocket->close();
+		m_webSocket->deleteLater();
+		m_webSocket = nullptr;
+	}
 }
+
+// AIWebSocketClient.cpp
+//AIWebSocketClient::~AIWebSocketClient()
+//{
+//	this->disconnect();
+//	// 先断开信号槽连接，避免异步回调
+//	if (m_webSocket) {
+//		m_webSocket->disconnect();  // 断开所有信号槽
+//
+//									// 如果是打开状态，先关闭
+//		if (m_webSocket->state() == QAbstractSocket::ConnectedState) {
+//			m_webSocket->close();
+//			QEventLoop loop;
+//			QTimer::singleShot(500, &loop, &QEventLoop::quit);
+//			loop.exec();  // 等待关闭完成
+//		}
+//
+//		m_webSocket->deleteLater();
+//		m_webSocket = nullptr;
+//	}
+//}
 
 void AIWebSocketClient::connectToServer(const QString &url, const QString &token)
 {
@@ -44,10 +80,6 @@ void AIWebSocketClient::connectToServer(const QString &url, const QString &token
 
 	m_webSocket->open(request);
 }
-
-//void AIWebSocketClient::onstatechange(QAbstractSocket::SocketState s) {
-//	qDebug() << "[WS] state=" << s;
-//}
 
 // 在 AIWebSocketClient 类中或相关位置
 void AIWebSocketClient::onMessageReceived(const QString &message)
@@ -78,123 +110,299 @@ void AIWebSocketClient::onDisconnected() {
 	//QCoreApplication::quit();
 }
 
+//void AIWebSocketClient::onBinaryMessageReceived(const QByteArray &message)
+//{
+//	// 安全检查
+//	if (!g_isApplicationRunning) {
+//		qDebug() << "应用正在关闭，跳过消息处理";
+//		return;
+//	}
+//
+//	if (!QCoreApplication::instance()) {
+//		qDebug() << "Qt应用已退出，跳过消息处理";
+//		return;
+//	}
+//
+//	// 检查消息是否有效
+//	if (message.isEmpty()) {
+//		qDebug() << "收到空消息";
+//		return;
+//	}
+//	try {
+//		QByteArray messageCopy = message;
+//		const unsigned char *p = (const unsigned char *)messageCopy.constData();
+//		WS::DetectionData data;
+//		// 1. 解析图像数据
+//		int l = *(int*)p;
+//		if (l > 0)
+//		{
+//			bool bOK = data.image.loadFromData(p + 4, l);
+//
+//			qDebug() << "✅ 图像加载:" << bOK << "尺寸:" << data.image.size();
+//			p += l;
+//		}
+//		p += 4;
+//
+//		// 2. 解析JSON数据
+//		try {
+//			// 1. 将原始数据指针p转换为const char*并解析为JSON对象
+//			json j = json::parse((const char*)p);
+//			qDebug() << tr2("✅ JSON解析成功");
+//			// 3. 使用专门的解析器将JSON对象转换为业务数据结构
+//			bool parseSuccess = WS::DetectionParser::parseFromJson(j, data);
+//
+//			qDebug() << tr2("解析器结果:") << parseSuccess;
+//			qDebug() << tr2("解析后bboxes:") << data.bboxes.size();
+//			qDebug() << tr2("解析后polygons:") << data.polygons.size();
+//
+//			// 🔥 关键：检查是否有检测目标，如果有则记录事件
+//			if (!data.bboxes.empty()) {
+//				QPainter painter(&data.image);
+//				int totalBoxCount = data.bboxes.size();
+//				// 直接使用 DetectionData 创建 EventData
+//				//for (auto box : data.bboxes)
+//				WS::EventData eventData;
+//				
+//				eventData.time = QTime::currentTime();
+//				eventData.type = 0;
+//				eventData.videoid = data.metadata.videoid;
+//				eventData.totalBoxesInImage = totalBoxCount;
+//				eventData.bboxes = data.bboxes;
+//				eventData.image = data.image.copy();
+//
+//				for (int i=0; i <totalBoxCount; i++)
+//				{
+//					const auto& box = data.bboxes[i];
+//					eventData.image = data.image.copy();
+//					
+//					//QString ttrack = QString(box.trackId);
+//					//painter.setFont(QFont("Arial", 12)); // 设置字体和大小
+//					//painter.drawRect(QRect(box.bbox[0], box.bbox[1], box.bbox[2], box.bbox[3]));
+//					//painter.setPen(Qt::red); // 设置画笔颜色为红色
+//					//painter.drawText(box.bbox[0], box.bbox[1], QString(box.label.c_str())); // 在指定位置绘制文字
+//
+//					// 绘制边框（加粗）
+//					painter.setPen(QPen(Qt::darkBlue, 1));
+//					painter.drawRect(box.bbox[0], box.bbox[1], box.bbox[2], box.bbox[3]);
+//
+//					// 绘制带背景的文本
+//					//运用正则表达式把label中的:后面的类别名拆分出来
+//					QString label = QString(box.label.c_str());
+//					QRegularExpression regex1(":(.*)$");
+//					QRegularExpressionMatch match1 = regex1.match(label);
+//					QString result;
+//					QString ttrackId = QString::number(box.trackId);
+//					result = "track_id:" + ttrackId;
+//					if (match1.hasMatch()) {
+//						result += match1.captured(1);
+//					}
+//					else {
+//						result += label;
+//					}
+//
+//					QString content = tr2("AI 识别到");
+//					QString sscore = QString::number(box.score, 'f', 2);
+//					result += " ";
+//					result += sscore;
+//					content += result;
+//
+//					eventData.eventcontent = content;
+//					LY_AgriVideoPlayer::Get().updateEventData(eventData);
+//
+//					int fontSize = getDynamicFontSize(data.image);
+//					QFont font("Arial", fontSize, QFont::Bold);
+//					painter.setFont(font);
+//
+//					QFontMetrics fm(font);
+//					int textWidth = fm.horizontalAdvance(result);
+//					//int textHeight = fm.height();
+//					int textAscent = fm.ascent();      // 基线以上的高度
+//					int textDescent = fm.descent();    // 基线以下的高度
+//					int textRealHeight = textAscent + textDescent;  // 文本实际高度
+//
+//					// 绘制文本背景 
+//					painter.fillRect(box.bbox[0], box.bbox[1] - textAscent,
+//						textWidth + 6, textRealHeight, Qt::darkBlue);
+//
+//					// 绘制文本
+//					painter.setPen(Qt::white);
+//					painter.drawText(box.bbox[0], box.bbox[1], result);
+//
+//					qDebug() << "🎯 检测到目标，已记录事件:" << eventData.eventcontent;
+//					//eventData.image = m_modelProcessor->matToQImage(matFrame);
+//					LY_AgriVideoPlayer::Get().updateDataResult(eventData);
+//					ttrackId.clear();
+//				}
+//				painter.end(); // 结束绘图操作，释放资源
+//			}
+//		}
+//		catch (const std::exception& e) {
+//			qDebug() << tr2("❌ JSON解析异常:") << e.what();
+//		}
+//
+//		LY_AgriVideoPlayer::Get().updateDetectionData(data);
+//	}
+//	catch (const std::exception& e) {
+//		qDebug() << "处理二进制消息时异常:" << e.what();
+//	}
+//	catch (...) {
+//		qDebug() << "处理二进制消息时未知异常";
+//	}
+//}
+
 void AIWebSocketClient::onBinaryMessageReceived(const QByteArray &message)
 {
-
-	static unsigned int nT = 0;
-	//qDebug() << "收到消息:" << message;
-
-	const unsigned char *p = (const unsigned char *)message.data();
-	// 🔥 创建 DetectionData 对象
-	WS::DetectionData data;
-	// 1. 解析图像数据
-	int l = *(int*)p;
-	if (l > 0)
-	{
-		// 		time_t tNow;
-		// 		time(&tNow);
-		// 		char szT[128];
-		// 		tm *pTM = localtime(&tNow);
-		// 		sprintf(szT, "%04d%02d%02d%02d%02d%02d%02d.jpg",
-		// 			pTM->tm_year + 1900, pTM->tm_mon + 1, pTM->tm_mday,
-		// 			pTM->tm_hour, pTM->tm_min, pTM->tm_sec, nT++ % 100);
-		// 		FILE *fp = fopen(szT, "wb");
-		// 		if (fp != NULL)
-		// 		{
-		// 			fwrite(p + 4, 1, l, fp);
-		// 			fclose(fp);
-		// 
-		// 			// 🔥 加载图像到 data.image
-		// 			bool bOK = data.image.load(szT);
-		// 			remove(szT);
-		// 			int kk = 0;
-		// 		}
-		bool bOK = data.image.loadFromData(p + 4, l);
-
-		qDebug() << "✅ 图像加载:" << bOK << "尺寸:" << data.image.size();
-		p += l;
+	// 安全检查
+	if (!g_isApplicationRunning) {
+		qDebug() << "应用正在关闭，跳过消息处理";
+		return;
 	}
-	p += 4;
 
-	// 2. 解析JSON数据
+	if (!QCoreApplication::instance()) {
+		qDebug() << "Qt应用已退出，跳过消息处理";
+		return;
+	}
+
+	// 检查消息是否有效
+	if (message.isEmpty()) {
+		qDebug() << "收到空消息";
+		return;
+	}
+
 	try {
-		// 1. 将原始数据指针p转换为const char*并解析为JSON对象
-		json j = json::parse((const char*)p);
-		qDebug() << tr2("✅ JSON解析成功");
-		// 3. 使用专门的解析器将JSON对象转换为业务数据结构
-		bool parseSuccess = WS::DetectionParser::parseFromJson(j, data);
+		QByteArray messageCopy = message;
+		const unsigned char *p = (const unsigned char *)messageCopy.constData();
+		WS::DetectionData data;
 
-		qDebug() << tr2("解析器结果:") << parseSuccess;
-		qDebug() << tr2("解析后bboxes:") << data.bboxes.size();
-		qDebug() << tr2("解析后polygons:") << data.polygons.size();
-
-		// 🔥 关键：检查是否有检测目标，如果有则记录事件
-		if (!data.bboxes.empty() || !data.polygons.empty() ||
-			!data.lines.empty() || !data.circles.empty()) {
-			QPainter painter(&data.image);
-
-			// 直接使用 DetectionData 创建 EventData
-			for (auto box : data.bboxes)
-			{
-				
-				WS::EventData eventData;
-				eventData.image = data.image;
-				eventData.time = QTime::currentTime();
-				eventData.type = 0;
-				eventData.videoid = data.metadata.videoid;
-				QString content = tr2("AI 识别到");
-				content += QString::fromStdString(box.label);
-				eventData.eventcontent = content;
-				LY_AgriVideoPlayer::Get().updateEventData(eventData);
-
-
-
-				//detections.push_back(box);
-				//LY_AgriVideoPlayer::Get().updateDataResult(eventData);
-
-// 				将QImage转换为OpenCV的Mat格式，便于使用OpenCV的图像处理功能
-// 								cv::Mat matFrame = m_modelProcessor->qimageToMat(data.image);
-// 				
-// 				
-// 				
-// 								// 根据BBox的坐标和尺寸创建OpenCV的矩形区域
-// 								// box.bbox[0] = x坐标, box.bbox[1] = y坐标, box.bbox[2] = 宽度, box.bbox[3] = 高度
-// 								cv::Rect rec((int)(box.bbox[0] * data.metadata.width), (int)(box.bbox[1] * data.metadata.height), (int)(box.bbox[2] * data.metadata.width), (int)(box.bbox[3] * data.metadata.height));
-// 				
-// 								// 在图像上绘制红色矩形框
-// 								// matFrame: 目标图像
-// 								// rec: 矩形区域
-// 								// cv::Scalar(0, 0, 255): BGR颜色值（蓝色=0, 绿色=0, 红色=255）→ 红色框
-// 								// 2: 线宽（2像素）
-// 								cv::rectangle(matFrame, rec, cv::Scalar(0, 0, 255), 2);
-// 				
-// 								// 创建字符串流对象，用于格式化输出
-// 								std::stringstream ss;
-// 				
-// 								// 设置输出格式：固定小数格式，保留2位小数
-// 								ss << std::setiosflags(std::ios::fixed) << std::setprecision(2) << box.score;
-
-				painter.setFont(QFont("Arial", 12)); // 设置字体和大小
-				painter.drawRect(QRect(box.bbox[0], box.bbox[1], box.bbox[2], box.bbox[3]));
-				painter.setPen(Qt::red); // 设置画笔颜色为红色
-				painter.drawText(box.bbox[0], box.bbox[1], QString(box.label.c_str())); // 在指定位置绘制文字
-
-				// 初始化标签字符串为空
-				std::string label = "";
-
-				qDebug() << "🎯 检测到目标，已记录事件:" << eventData.eventcontent;
-				//eventData.image = m_modelProcessor->matToQImage(matFrame);
-				LY_AgriVideoPlayer::Get().updateDataResult(eventData);
-			}
-			painter.end(); // 结束绘图操作，释放资源
+		// 1. 解析图像数据
+		int l = *(int*)p;
+		if (l > 0) {
+			bool bOK = data.image.loadFromData(p + 4, l);
+			qDebug() << "✅ 图像加载:" << bOK << "尺寸:" << data.image.size();
+			p += l;
 		}
+		p += 4;
+
+		// 2. 解析JSON数据
+		try {
+			json j = json::parse((const char*)p);
+			bool parseSuccess = WS::DetectionParser::parseFromJson(j, data);
+
+			qDebug() << "解析后bboxes:" << data.bboxes.size();
+
+			// ========== 1. 处理检测目标 ==========
+			if (!data.bboxes.empty()) {
+				QPainter painter(&data.image);  // 直接在 data.image 上绘制
+				int totalBoxCount = data.bboxes.size();
+
+				// ========== 1. 先绘制所有框 ==========
+				for (int i = 0; i < totalBoxCount; i++) {
+					const auto& box = data.bboxes[i];
+
+					// 解析类别名
+					QString label = QString(box.label.c_str());
+					QString className = label.contains(":") ? label.split(":").last() : label;
+					QString result = QString("track_id:%1 %2 %3")
+						.arg(box.trackId)
+						.arg(className)
+						.arg(box.score, 0, 'f', 2);
+
+					// 绘制边框
+					painter.setPen(QPen(Qt::darkBlue, 2));
+					painter.drawRect(box.bbox[0], box.bbox[1], box.bbox[2], box.bbox[3]);
+
+					// 绘制文本
+					int fontSize = getDynamicFontSize(data.image);
+					QFont font("Arial", fontSize, QFont::Bold);
+					painter.setFont(font);
+
+					QFontMetrics fm(font);
+					int textWidth = fm.horizontalAdvance(result);
+					int textAscent = fm.ascent();
+					int textRealHeight = fm.height();
+
+					painter.fillRect(box.bbox[0], box.bbox[1] - textAscent,
+						textWidth + 6, textRealHeight, Qt::darkBlue);
+					painter.setPen(Qt::white);
+					painter.drawText(box.bbox[0], box.bbox[1], result);
+				}
+				painter.end();
+
+				// ========== 2. 绘制完成后，再创建 EventData 并发送 ==========
+				WS::EventData imageEventData;
+				imageEventData.time = QTime::currentTime();
+				imageEventData.type = 0;
+				imageEventData.videoid = data.metadata.videoid;
+				imageEventData.totalBoxesInImage = totalBoxCount;
+				imageEventData.bboxes = data.bboxes;
+				imageEventData.image = data.image.copy();  // 现在图片上已经有框了！
+
+														   // 生成汇总事件内容
+				QStringList classNames;
+				for (const auto& box : data.bboxes) {
+					QString label = QString(box.label.c_str());
+					QString className = label.contains(":") ? label.split(":").last() : label;
+					classNames << className;
+				}
+				imageEventData.eventcontent = QString(tr2("检测到: %1")).arg(classNames.join(", "));
+
+				// 发送到 DataResult
+				LY_AgriVideoPlayer::Get().updateDataResult(imageEventData);
+
+				// ========== 3. 每个框单独的事件记录 ==========
+				for (int i = 0; i < totalBoxCount; i++) {
+					const auto& box = data.bboxes[i];
+					QString label = QString(box.label.c_str());
+					QString className = label.contains(":") ? label.split(":").last() : label;
+
+					WS::EventData singleEventData;
+					singleEventData.image = data.image.copy();  // 图片上已经有框了
+					singleEventData.time = QTime::currentTime();
+					singleEventData.type = 1;
+					singleEventData.videoid = data.metadata.videoid;
+					singleEventData.totalBoxesInImage = totalBoxCount;
+					singleEventData.bboxes = { box };
+					singleEventData.eventcontent = QString(tr2("AI识别到 %1 (置信度:%2) track_id:%3"))
+						.arg(className)
+						.arg(box.score, 0, 'f', 2)
+						.arg(box.trackId);
+
+					LY_AgriVideoPlayer::Get().updateEventData(singleEventData);
+				}
+				painter.end();
+			}
+
+			// ========== 3. 发送到视频窗口（实时显示） ==========
+			LY_AgriVideoPlayer::Get().updateDetectionData(data);
+
+		}
+		catch (const std::exception& e) {
+			qDebug() << "❌ JSON解析异常:" << e.what();
+		}
+
 	}
 	catch (const std::exception& e) {
-		qDebug() << tr2("❌ JSON解析异常:") << e.what();
+		qDebug() << "处理二进制消息时异常:" << e.what();
 	}
+	catch (...) {
+		qDebug() << "处理二进制消息时未知异常";
+	}
+}
 
-	LY_AgriVideoPlayer::Get().updateDetectionData(data);
+int AIWebSocketClient::getDynamicFontSize(const QImage& image) {
+	int width = image.width();
+	int height = image.height();
 
+	//基于图像对角线（考虑长宽比）
+	double diagonal = sqrt(width * width + height * height);
+	int fontSize = diagonal / 125; // 对角线长度的1/125
+
+	fontSize = std::max(8, std::min(fontSize, 30));
+
+	qDebug() << "图像:" << width << "×" << height
+		<< "，计算字体大小:" << fontSize;
+
+	return fontSize;
 }
 
 void AIWebSocketClient::onError(QAbstractSocket::SocketError error) {
@@ -245,31 +453,6 @@ static std::string get_access_token(const char *lpszHost) {
 	return "";
 }
 
-//bool StartGdd(const char *lpszHost)
-//{
-//	// 使用 Qt 的异步机制在主线程中启动
-//	QTimer::singleShot(0, [host = std::string(lpszHost)]() {
-//		qDebug() << "=== 在主线程中启动 WebSocket ===";
-//
-//		std::string access_token = get_access_token(host.c_str());
-//		if (access_token.empty()) {
-//			qDebug() << "❌ 获取 access_token 失败";
-//			return;
-//		}
-//
-//		// 注意：这里需要持久化 client，否则会被立即销毁
-//		static std::unique_ptr<AIWebSocketClient> client = std::make_unique<AIWebSocketClient>();
-//
-//		QString url = "ws://" + QString::fromStdString(host) +
-//			":9090/api/inflet/v1/task/preview?id=39ad5b59-17d8-4fc1-9595-945f45ce6e55&nodeId=JsonSerializer_v3&mode=0&token=" +
-//			QString::fromStdString(access_token);
-//
-//		qDebug() << "连接 URL:" << url;
-//		client->connectToServer(url, QString::fromStdString(access_token));
-//	});
-//
-//	return true;
-//}
 
 cv::Mat AIWebSocketClient::qimageToMat(const QImage &img)
 {
@@ -295,41 +478,6 @@ cv::Mat AIWebSocketClient::qimageToMat(const QImage &img)
 			static_cast<size_t>(converted.bytesPerLine()));
 	}
 }
-
-
-//void sendTo192() {
-//	// 创建网络管理器
-//	static QNetworkAccessManager manager;
-//
-//	// 创建JSON对象
-//	QJsonObject json;
-//	json["video"] = "v1";
-//	json["model"] = "m1";
-//	json["enable"] = true;
-//
-//	// 转换为JSON字符串
-//	QJsonDocument doc(json);
-//	QByteArray data = doc.toJson();
-//
-//	// 创建网络请求
-//	QNetworkRequest request;
-//	request.setUrl(QUrl("http://192.168.1.138:9090"));  
-//	request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-//
-//	// 发送POST请求
-//	QNetworkReply* reply = manager.post(request, data);
-//
-//	// 连接完成信号
-//	QObject::connect(reply, &QNetworkReply::finished, [reply]() {
-//		if (reply->error() == QNetworkReply::NoError) {
-//			qDebug() << "✅ 发送成功到192.168.1.138";
-//		}
-//		else {
-//			qDebug() << "❌ 发送失败:" << reply->errorString();
-//		}
-//		reply->deleteLater();
-//	});
-//}
 
 
 // 新增函数：从XML文件读取模型名并格式化为查询字符串
@@ -420,7 +568,7 @@ QString getModelsFromXml(const QString& xmlFilePath) {
 //	return true;
 //}
 
-bool StartAI(const char *lpszHost)
+bool AIWebSocketClient::StartAI(const char *lpszHost)
 {
 	// 创建独立的网络线程
 	QThread* networkThread = []() {
@@ -467,10 +615,23 @@ bool StartAI(const char *lpszHost)
 
 	return true;
 }
+
+
+
+
+
+// 使用静态数组存储
 // 在全局变量 clients 附近添加互斥锁
 static QMutex g_clientsMutex;  // 全局互斥锁
-	static AIWebSocketClient* clients[5] = { nullptr };
-bool StartMultiStreamAI(const char *lpszHost)
+static AIWebSocketClient* clients[5] = { nullptr };
+static QThread* threads[5] = { nullptr };
+static QList<AIWebSocketClient::StreamConfig> g_currentConfigs;
+QList<AIWebSocketClient::StreamConfig> AIWebSocketClient::getCurrentStreamConfigs()
+{
+	QMutexLocker locker(&g_clientsMutex);
+	return g_currentConfigs;
+}
+bool AIWebSocketClient::StartMultiStreamAI(const char *lpszHost)
 {
 	QString host_qstr = QString::fromStdString(lpszHost);
 	QString modelsQuery = getModelsFromXml("../data/models.xml");
@@ -478,29 +639,39 @@ bool StartMultiStreamAI(const char *lpszHost)
 	// 加锁保护 clients 数组
 	QMutexLocker locker(&g_clientsMutex);
 
-	// 定义多个视频流配置
-	struct StreamConfig {
-		QString streamId;
-		QString rtspUrl;
-		int port;
-		QString description;
-	};
+	//// 定义多个视频流配置
+	//struct StreamConfig {
+	//	QString streamId;
+	//	QString rtspUrl;
+	//	int port;
+	//	QString description;
+	//};
 
-	QList<StreamConfig> configs = {
-		{ "v1", "rtsp://192.168.1.138:8554/live/qjd",               19090, "qjd" },
-		/*{ "v1", "rtsp://admin:lysd2018@192.168.1.73:554/h264/ch1/main/av_stream",               19093, "av_stream" },*/
-		{ "v2", "rtsp://192.168.1.138:8554/live/right_11",          19091, "right_11" },
-		{ "v3", "rtsp://192.168.1.138:8554/live/AgriculturalPatrol",19092, "AgriculturalPatrol" },
-		{ "v4", "rtsp://192.168.1.138:8554/live/testfire",          19093, "testfire" },
-		{ "v5", "rtsp://admin:lysd2018@192.168.1.73:554/h264/ch1/main/av_stream",          19094, "av_stream" }
-	};
+	//QList<StreamConfig> configs = {
+	//	{ "v1", "rtsp://192.168.1.138:8554/live/qjd",               19090, "qjd" },
+	//	{ "v2", "rtsp://192.168.1.138:8554/live/right_11",          19091, "right_11" },
+	//	{ "v3", "rtsp://192.168.1.138:8554/live/AgriculturalPatrol",19092, "AgriculturalPatrol" },
+	//	//{ "v4", "rtsp://192.168.1.138:8554/live/testfire",          19093, "testfire" },
+	//	{ "v4", "rtsp://192.168.1.119/554",          19093, "554" },
+	//	{ "v5", "rtsp://admin:lysd2018@192.168.1.72:554/h264/ch1/main/av_stream",          19094, "av_stream" }
+	//	//{ "v5", "rtsp://admin:123456@192.168.1.122/stream0",          19094, "stream0" }
+	//};
 
-	// 使用静态数组存储
+	g_currentConfigs = {
+			{ "v1", "rtsp://192.168.1.138:8554/live/qjd",               19090, "qjd" },
+			{ "v2", "rtsp://192.168.1.138:8554/live/right_11",          19091, "right_11" },
+			{ "v3", "rtsp://192.168.1.138:8554/live/AgriculturalPatrol",19092, "AgriculturalPatrol" },
+			{ "v4", "rtsp://192.168.1.138:8554/live/testfire",          19093, "testfire" },
+			//{ "554", "rtsp://192.168.1.119/554",          19093, "/*554*/" },
+			{ "av_stream", "rtsp://admin:lysd2018@192.168.1.72:554/h264/ch1/main/av_stream",          19094, "av_stream" }
+			//{ "v5", "rtsp://admin:123456@192.168.1.122/stream0",          19094, "stream0" }
+		};
 
-	static QThread* threads[5] = { nullptr };
 
-	for (int i = 0; i < configs.size(); i++) {
-		const auto& config = configs[i];
+
+
+	for (int i = 0; i < g_currentConfigs.size(); i++) {
+		const auto& config = g_currentConfigs[i];
 
 		// 清理之前的连接（如果存在）
 		if (threads[i]) {
@@ -533,6 +704,7 @@ bool StartMultiStreamAI(const char *lpszHost)
 		query.addQueryItem("url", config.rtspUrl);
 		query.addQueryItem("url_input", "rtsp/server");
 		//query.addQueryItem("models", "helmet.pt,landing_site.pt,oiltank.pt");
+		query.addQueryItem("tracking", "true");
 		query.addQueryItem("models", modelsQuery);
 		query.addQueryItem("stride", "1");
 		query.addQueryItem("only_when_detected", "false");
@@ -599,4 +771,73 @@ bool AIWebSocketClient::SendWsMsg(const QString &id, /*const QString &msg*/ cons
 		clients[4]->sendMessage(msg);
 	}
 	return true;
+}
+
+//void AIWebSocketClient::CleanupAllConnections()
+//{
+//
+//	// 1. 先关闭所有 WebSocket 连接
+//	for (int i = 0; i < 5; ++i) {
+//		if (clients[i]) {
+//			// 发送关闭请求
+//			clients[i]->m_webSocket->disconnect();
+//			clients[i]->m_webSocket->close();
+//			clients[i]->m_webSocket->deleteLater();
+//			clients[i]->m_webSocket = nullptr;
+//
+//			// 停止事件处理
+//			clients[i]->deleteLater();
+//			clients[i] = nullptr;
+//		}
+//	}
+//
+//	// 2. 等待线程安全退出
+//	for (int i = 0; i < 5; ++i) {
+//		if (threads[i]) {
+//			threads[i]->quit();
+//			threads[i]->wait(2000);  // 等待1秒
+//			delete threads[i];
+//			threads[i] = nullptr;
+//		}
+//	}
+//}
+
+void AIWebSocketClient::CleanupAllConnections()
+{
+    qDebug() << "开始清理所有连接...";
+    
+    // 1. 立即设置退出标志（阻止新的 onBinaryMessageReceived 执行）
+    setApplicationShuttingDown();
+    
+    // 2. 立即关闭所有 WebSocket 连接（阻止接收新消息）
+    for (int i = 0; i < 5; ++i) {
+        if (clients[i] && clients[i]->m_webSocket) {
+            qDebug() << "立即关闭 WebSocket" << i;
+            
+            // 断开所有信号连接（包括 binaryMessageReceived）
+            clients[i]->m_webSocket->disconnect();
+            
+            // 立即关闭 socket
+            clients[i]->m_webSocket->abort();  // 使用 abort() 而不是 close()
+            clients[i]->m_webSocket->deleteLater();
+        }
+    }
+    
+    // 3. 给正在执行的 onBinaryMessageReceived 一点时间完成
+    QThread::msleep(500);  // 等待500ms
+    
+    // 4. 现在可以安全删除客户端
+    for (int i = 0; i < 5; ++i) {
+        if (clients[i]) {
+            clients[i]->deleteLater();
+            clients[i] = nullptr;
+        }
+        
+        if (threads[i]) {
+            threads[i]->quit();
+            threads[i] = nullptr;
+        }
+    }
+    
+    qDebug() << "清理完成";
 }

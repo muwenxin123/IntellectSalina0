@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>VideoHUDDialog</class>
+ <widget class="QWidget" name="VideoHUDDialog"/>
+ <resources/>
+ <connections/>
+</ui>

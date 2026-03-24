@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>IntellectImageShangBoDialog</class>
+ <widget class="QWidget" name="IntellectImageShangBoDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>477</width>
+    <height>503</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>上博智象吊舱控制</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_4" rowstretch="1,4,0,3">
+   <item row="2" column="0">
+    <widget class="QGroupBox" name="groupBox_Control_Track">
+     <property name="title">
+      <string>跟踪</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkBox_Trace_Common_OpenRecognition">
+        <property name="text">
+         <string>打开识别</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="pushButton_Trace_Common_Recognition1">
+        <property name="text">
+         <string>识别转跟踪</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="pushButton_Trace_Common_Recognition2">
+        <property name="text">
+         <string>识别转跟踪</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="groupBox_Control_Common">
+     <property name="title">
+      <string>常用功能</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="label_Control_Common_ControlSpeedName">
+          <property name="text">
+           <string>速度：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="doubleSpinBox_Control_Common_ControlSpeed">
+          <property name="value">
+           <double>5.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="pushButton_Control_Common_Up">
+        <property name="text">
+         <string>上</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="pushButton_Control_Common_Center">
+        <property name="text">
+         <string>归中</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QPushButton" name="pushButton_Control_Common_HDown">
+        <property name="text">
+         <string>下视</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="pushButton_Control_Common_Left">
+        <property name="text">
+         <string>左</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="pushButton_Control_Common_Stop">
+        <property name="text">
+         <string>停止</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QPushButton" name="pushButton_Control_Common_Right">
+        <property name="text">
+         <string>右</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QPushButton" name="pushButton_Control_Common_BearFollow">
+        <property name="text">
+         <string>开方位跟随</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QPushButton" name="pushButton_Control_Common_Down">
+        <property name="text">
+         <string>下</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="3">
+       <widget class="QPushButton" name="pushButton_Control_Common_OffMotor">
+        <property name="text">
+         <string>关电机</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QPushButton" name="pushButton_Control_Common_StartDistance">
+        <property name="text">
+         <string>开始测距</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QPushButton" name="pushButton_Control_Common_StopDistance">
+        <property name="text">
+         <string>停止测距</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QPushButton" name="pushButton_Control_Common_SetAngle">
+        <property name="text">
+         <string>指定角度</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="3">
+       <widget class="QSplitter" name="splitter">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_Control_Common_SetAngle_Yaw">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="prefix">
+          <string>方位</string>
+         </property>
+         <property name="minimum">
+          <double>-180.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>180.000000000000000</double>
+         </property>
+        </widget>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_Control_Common_SetAngle_Pitch">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="prefix">
+          <string>俯仰</string>
+         </property>
+         <property name="minimum">
+          <double>-120.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>120.000000000000000</double>
+         </property>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QGroupBox" name="groupBox_Control_Image">
+     <property name="title">
+      <string>图像</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <widget class="QPushButton" name="pushButton_Image_Common_Photograph">
+        <property name="text">
+         <string>拍照</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="pushButton_Image_Common_StartVideo">
+        <property name="text">
+         <string>开始录像</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="pushButton_Image_Common_StopVideo">
+        <property name="text">
+         <string>停止录像</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="pushButton_Image_Common_ChangeMultiple_Add">
+        <property name="text">
+         <string>变倍+</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSpinBox" name="doubleSpinBox_Image_Common_ChangeMulitiple">
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>7</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QPushButton" name="pushButton_Image_Common_ChangeMulitiple_Sub">
+        <property name="text">
+         <string>变倍-</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QPushButton" name="pushButton_Image_Common_Zoom_Add">
+        <property name="text">
+         <string>变焦倍数</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QSpinBox" name="doubleSpinBox_Image_Common_ChangleZoom">
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>99</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox_Control_Connect">
+     <property name="title">
+      <string>吊舱连接</string>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="5,1,1,1,1">
+      <item>
+       <widget class="QLineEdit" name="lineEdit_Control_ConnectAddress"/>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit_Control_ConnectPort"/>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_Control_Connect">
+        <property name="text">
+         <string>连接吊舱</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_Control_DisConnect">
+        <property name="text">
+         <string>断开吊舱</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkBox_Control_AutoConnect">
+        <property name="text">
+         <string>吊舱自动连接</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,22 @@
+﻿FIND_PATH(LYCORE_INCLUDE_DIR IInterface.h)
+
+macro(find_lyCore_library)
+  foreach(_var ${ARGN})
+    string(TOUPPER ${_var} _varU)
+    find_library(${_varU}_LIBRARY_RELEASE NAMES ${_var})
+    find_library(${_varU}_LIBRARY_DEBUG NAMES ${_var}D)
+    set(${_varU}_LIBRARY ${${_varU}_LIBRARY_RELEASE})
+    if(${_varU}_LIBRARY_DEBUG)
+      set(${_varU}_LIBRARIES optimized ${${_varU}_LIBRARY_RELEASE} debug ${${_varU}_LIBRARY_DEBUG})
+    else()
+      set(${_varU}_LIBRARIES ${${_varU}_LIBRARY_RELEASE})
+    endif()
+    list(APPEND LYCORES_LIBRARIES ${${_varU}_LIBRARIES})
+  endforeach()
+endmacro()
+
+find_lyCore_library(map3d lyUI lyCore Geometry)
+
+if (LYCORE_INCLUDE_DIR AND LYCORE_LIBRARY)
+  set(LYCORE_FOUND TRUE)
+endif()

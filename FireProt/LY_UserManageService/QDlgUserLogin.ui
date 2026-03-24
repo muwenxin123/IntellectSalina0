@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QDlgUserLogin</class>
+ <widget class="QDialog" name="QDlgUserLogin">
+  <property name="windowModality">
+   <enum>Qt::WindowModality::WindowModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1000</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QWidget" name="login_widget" native="true">
+     <property name="styleSheet">
+      <string notr="true">#login_widget{background-image: url(:/images/1k/black/Login/login_bg.jpg);}</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="topMargin">
+       <number>150</number>
+      </property>
+      <property name="bottomMargin">
+       <number>50</number>
+      </property>
+      <item alignment="Qt::AlignmentFlag::AlignHCenter">
+       <widget class="QLabel" name="login_title_label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <family>新宋体</family>
+          <pointsize>-1</pointsize>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">font-family:新宋体; font-size: 33px; color: #d6e7f9;</string>
+        </property>
+        <property name="text">
+         <string>智慧巡检与管控系统</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignCenter</set>
+        </property>
+        <property name="textInteractionFlags">
+         <set>Qt::TextInteractionFlag::NoTextInteraction</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Orientation::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>39</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QComboBox" name="cbxUserSeat">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>270</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QComboBox{background: transparent; border: none; min-height: 0px; max-height: 0px; min-width: 270px; max-width: 270px; font-family: Microsoft Yahei; font-size: 14px; color: #bfbfbf; background-image: url(:/images/1k/black/Login/login_line_normal.png);background-repeat: no-repeat;}
+QComboBox:hover { background-image: url(:/images/1k/black/Login/login_line_checked.png); background-repeat: no-repeat;}
+QComboBox::drop-down { min-width: 22; max-width: 22; min-height: 16; max-height: 16; border: none; padding-right: -8px;}
+QComboBox::down-arrow {subcontrol-position: center right; background-image: url(:/images/1k/black/QComboBox/arrow.png);background-repeat: no-repeat;}
+QComboBox::down-arrow:on {subcontrol-position: center right; background-image: url(:/images/1k/black/QComboBox/arrow_on.png);background-repeat: no-repeat;}</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="spacing">
+           <number>20</number>
+          </property>
+          <item>
+           <widget class="QComboBox" name="cbxUsername">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>288</width>
+              <height>43</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>43</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QComboBox{background: transparent;min-height: 43px; max-height: 43px; min-width: 268px;font-family: Microsoft Yahei; font-size: 14px; color: #bfbfbf; border-image: url(:/images/1k/black/Login/login_line_normal.png); background-image: url(:/images/1k/black/Login/login_user_icon.png); background-repeat: no-repeat; background-position: left center;padding-left: 20px;}
+QComboBox:hover { border-image: url(:/images/1k/black/Login/login_line_checked.png);}
+QComboBox::drop-down { min-width: 30; max-width: 30; min-height: 30; max-height: 30; border: none; padding-right: 20px;}
+QComboBox::down-arrow {subcontrol-position: center right; image: url(:/images/1k/black/Login/combobox_arrow.png); }
+QComboBox::down-arrow:on {subcontrol-position: center right; image: url(:/images/1k/black/Login/combobox_arrow_on.png); }
+QComboBox:editable{ color: #bfbfbf; border: none; background: transparent;}
+QComboBox:on {color: #bfbfbf; border: none;}
+QComboBox:disabled { color: #bfbfbf; border: none; }
+QComboBox QListWidget::item { min-height: 10px; max-height: 10px; background: transparent;}
+QComboBox QTreeView { border: none; background: transparent; }
+QComboBox QAbstractItemView { outline: none;  selection-background-color: rgba(68, 141, 208, 100); background-color: rgba(255, 255, 255, 100); border: none;}
+QComboBox QAbstractItemView::item{min-height: 30px; max-height: 30px;}</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="ledtPassWord">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>288</width>
+              <height>43</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>43</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QLineEdit{background: transparent; border: none;min-height: 43px; max-height: 43px; min-width: 268px;font-family: Microsoft Yahei; font-size: 14px; color: #bfbfbf; border-image: url(:/images/1k/black/Login/login_line_normal.png); background-image: url(:/images/1k/black/Login/login_password_icon.png); background-repeat: no-repeat; background-position: left center; padding-left: 20px;}
+QLineEdit:hover { border-image: url(:/images/1k/black/Login/login_line_checked.png);}</string>
+            </property>
+            <property name="placeholderText">
+             <string>     请输入密码</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pbtnLogin">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>268</width>
+              <height>43</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>43</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>Microsoft Yahei</family>
+              <pointsize>-1</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton{background: transparent; min-height: 43px; max-height: 43px; min-width: 268px; font-family: Microsoft Yahei; font-size: 14px; color: #bfbfbf; border-image: url(:/images/1k/black/Login/login_button_normal.png);background-repeat: no-repeat;}
+QPushButton:hover{font-family: Microsoft Yahei; font-size: 14px; color: #bfbfbf; border-image: url(:/images/1k/black/Login/login_button__checked.png);background-repeat: no-repeat;}
+QPushButton:pressed{font-family: Microsoft Yahei; font-size: 14px; color: #bfbfbf; border-image: url(:/images/1k/black/Login/login_button__checked.png);background-repeat: no-repeat;}
+</string>
+            </property>
+            <property name="text">
+             <string>Login</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pbtnCancel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>268</width>
+              <height>43</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>43</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>Microsoft Yahei</family>
+              <pointsize>-1</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton{background: transparent; min-height: 43px; max-height: 43px; min-width: 268px; font-family: Microsoft Yahei; font-size: 14px; color: #bfbfbf; border-image: url(:/images/1k/black/Login/login_button_normal.png);background-repeat: no-repeat;}
+QPushButton:hover{font-family: Microsoft Yahei; font-size: 14px; color: #bfbfbf; border-image: url(:/images/1k/black/Login/login_button__checked.png);background-repeat: no-repeat;}
+QPushButton:pressed{font-family: Microsoft Yahei; font-size: 14px; color: #bfbfbf; border-image: url(:/images/1k/black/Login/login_button__checked.png);background-repeat: no-repeat;}
+</string>
+            </property>
+            <property name="text">
+             <string>Quit</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Orientation::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>39</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item alignment="Qt::AlignmentFlag::AlignHCenter">
+       <widget class="QLabel" name="login_bottom_text_label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <family>Microsoft Yahei</family>
+          <pointsize>-1</pointsize>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QLabel{font-family: Microsoft Yahei; font-size: 12px; color: #bfbfbf;}</string>
+        </property>
+        <property name="text">
+         <string>智慧巡检与管控系统@北京领云时代科技有限公司版权所有 LY-MU01 v1.0</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignCenter</set>
+        </property>
+        <property name="textInteractionFlags">
+         <set>Qt::TextInteractionFlag::NoTextInteraction</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../qrc/FireProt.qrc"/>
+ </resources>
+ <connections/>
+</ui>

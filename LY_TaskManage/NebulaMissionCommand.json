@@ -1,0 +1,60 @@
+{
+    "ID": "100",
+    "Para": {
+        "interval": {
+            "value": "0",
+            "type": "uint",
+            "name": "interval",
+            "ch": "时间间隔",
+            "def": "1000",
+            "min": "10",
+            "max": "100000",
+            "unit": "s"
+        },
+        "interval": {
+            "value": "0",
+            "type": "uint",
+            "name": "时间间隔",
+            "unit": "s"
+        },
+        "bomb1":{"value":"0","type":"uint","name":"bomb1","ch":"bomb1 解锁 保险","def":"0","min":"0","max":"1","unit":"","tips":"0:no select,1:select"},
+        "bomb2":{"value":"0","type":"uint","name":"bomb2","ch":"bomb2 解锁 保险","def":"0","min":"0","max":"1","unit":"","tips":"0:no select,1:select"},
+        "bomb3":{"value":"0","type":"uint","name":"bomb3","ch":"bomb3 解锁 保险","def":"0","min":"0","max":"1","unit":"","tips":"0:no select,1:select"},
+        "bomb4":{"value":"0","type":"uint","name":"bomb4","ch":"bomb4 解锁 保险","def":"0","min":"0","max":"1","unit":"","tips":"0:no select,1:select"},
+        "bomb5":{"value":"0","type":"uint","name":"bomb5","ch":"bomb5 解锁 保险","def":"0","min":"0","max":"1","unit":"","tips":"0:no select,1:select"},
+        "bomb6":{"value":"0","type":"uint","name":"bomb6","ch":"bomb6 解锁 保险","def":"0","min":"0","max":"1","unit":"","tips":"0:no select,1:select"},
+        "bomb7":{"value":"0","type":"uint","name":"bomb7","ch":"bomb7 解锁 保险","def":"0","min":"0","max":"1","unit":"","tips":"0:no select,1:select"},
+        "bomb8":{"value":"0","type":"uint","name":"bomb8","ch":"bomb8 解锁 保险","def":"0","min":"0","max":"1","unit":"","tips":"0:no select,1:select"},
+        "bomb9":{"value":"0","type":"uint","name":"bomb9","ch":"bomb9 解锁 保险","def":"0","min":"0","max":"1","unit":"","tips":"0:no select,1:select"}
+         
+    }
+}
+
+{
+    "ID": "140",
+    "Para": {
+        "scannAngle": {
+            "value": "0",
+            "type": "uint",
+            "name": "scannAngle",
+            "ch": "扫描角度",
+            "def": "0",
+            "min": "0",
+            "max": "360",
+            "unit": "",
+            "tips": "扫描角度 0~360"
+        },
+        "scannSpeed": {
+            "value": "0",
+            "type": "uint",
+            "name": "scannSpeed",
+            "ch": "扫描速度",
+            "def": "0",
+            "min": "0",
+            "max": "100",
+            "unit": "",
+            "tips": "扫描速度 0~100"
+        }
+    }
+}
+

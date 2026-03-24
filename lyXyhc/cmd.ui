@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Cmd</class>
+ <widget class="QWidget" name="Cmd">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>343</width>
+    <height>342</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>2</number>
+     </property>
+     <widget class="CmdPlane" name="tab">
+      <attribute name="title">
+       <string>fly parameter</string>
+      </attribute>
+     </widget>
+     <widget class="CmdFlight" name="tab_2">
+      <attribute name="title">
+       <string>fly control</string>
+      </attribute>
+     </widget>
+     <widget class="CmdTrack" name="tab_3">
+      <attribute name="title">
+       <string>flyponit manage</string>
+      </attribute>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CmdTrack</class>
+   <extends>QWidget</extends>
+   <header>cmdTrack.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CmdFlight</class>
+   <extends>QWidget</extends>
+   <header>cmdFlight.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CmdPlane</class>
+   <extends>QWidget</extends>
+   <header>cmdPlane.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

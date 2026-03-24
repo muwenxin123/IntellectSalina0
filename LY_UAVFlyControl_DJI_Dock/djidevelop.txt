@@ -1,0 +1,7 @@
+SDK Type       Cloud API
+App Name       AppLy
+APP ID         150818
+App Key        c7db82bc806f29285a587290afddfae
+App License    mcqDunoj9fzk6uK9ZYtzbkjbepgGKQ5xt5QfV9+VYbN4uxrWXL9S7YDQSC1xtpxMvjfZMGebLlYJRy2mTrEBK/3/XKvLakK9lBXPx0NfGZSEijoxThY0GspP56remjiM+GXSNOQ+p9IG8K1FvRMHNjHAmZIluzz7tdjuY7luTwQ=
+Category       Agricultural applications
+Description    AppLy

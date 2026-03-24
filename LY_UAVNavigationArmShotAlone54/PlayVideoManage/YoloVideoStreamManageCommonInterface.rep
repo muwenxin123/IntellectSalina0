@@ -1,0 +1,24 @@
+#include <QList>
+#include <QRect>
+
+class YoloVideoStreamManageCommonInterface
+{
+    PROP(bool currState = false);
+
+    PROP(int  targetType = 0);
+
+    PROP(int  videoType = 0);
+
+    SIGNAL(yoloTypeChanged(bool yolo));
+
+    SIGNAL(video_start());
+    SIGNAL(video_stop());
+
+    SIGNAL(video_exit());
+
+    SLOT(void video_widow_show(const bool show));
+
+    SLOT(void video_selectrect(const QByteArray videostreamtargetinfo));
+
+    SLOT(void server_slot(bool clientState));
+};

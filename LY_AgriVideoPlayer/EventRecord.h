@@ -6,6 +6,7 @@
 #include "yolo_v2_class.hpp"
 #include "videoconfig.h"
 #include "gdd/wsProtocol.h"
+#include <QTimer>
 
 #include <QReadLocker>
 namespace Ui {
@@ -27,8 +28,22 @@ public:
 	void setfeedback(const WS::DetectionData& data);
 	
 	void setEventData(const WS::EventData& data);
-public slots:
 
+	// Ìí¼Ó shutdown ·½·¨
+	void shutdown() {
+		m_isShuttingDown = true;
+		if (m_timer) {
+			m_timer->stop();
+		}
+	}
+
+	bool isShuttingDown() const { return m_isShuttingDown; }
+
+private:
+	bool m_isShuttingDown = false;
+
+private  slots:
+	void updateTable(const std::vector<WS::EventData>& data);
 
 //public slots:
 //	void handleData(const char* str);

@@ -2,50 +2,29 @@
 #include "ui_camerawidget.h"
 #include <QPainter>
 #include <QDebug>
-#include <QMouseEvent>
-#include <QBitmap>
-#include <QPixmap>
-#include <QCoreApplication>
-#include <QTextCodec>
+#include <QCloseEvent>
 #include "LY_AgriVideoPlayer.h"
 
-
 #pragma execution_character_set("utf-8")
+
 CameraWidget::CameraWidget(int videoID, QWidget *parent)
-	:QWidget(parent)
+	: QWidget(parent)
 	, m_videoID(videoID)
-    ,ui(new Ui::CameraWidget)
+	, ui(new Ui::CameraWidget)
+	, m_hoveredBox(nullptr)
 {
+	ui->setupUi(this);
 
-
-    ui->setupUi(this);
+	// 设置窗口属性
 	this->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
-	//this->setAttribute(Qt::WA_TranslucentBackground, true);//设置窗口背景透明
-	this->setStyleSheet("CameraWidget{background-color: #162130};");
-	//this->setStyleSheet(QString("CameraWidget{border-image: none;"
-	//	  "border-image:url(\"../images/1k/black/ResourcePool/bg_notitle.png\");"
-	//	"border:none}"));
+	this->setAttribute(Qt::WA_TranslucentBackground, true);
+	this->setStyleSheet(QString("CameraWidget{border-image: none;"
+		"border-image:url(\"../images/1k/black/ResourcePool/bg_notitle.png\");"
+		"border:none}"));
 
-	//setMouseTracking(true);
-	ui->groupBox->hide();
-	ui->label_2->setStyleSheet("QLabel{ border-image: url(:/images/1k/black/QPushButton/normal.png) 3 8 5 8px; border-width: 3 8 5 8px; }");
-	ui->label_3->setStyleSheet("QLabel{ border-image: url(:/images/1k/black/QPushButton/normal.png) 3 8 5 8px; border-width: 3 8 5 8px; }");
-	ui->label_4->setStyleSheet("QLabel{ border-image: url(:/images/1k/black/QPushButton/normal.png) 3 8 5 8px; border-width: 3 8 5 8px; }");
-	ui->label_5->setStyleSheet("QLabel{ border-image: url(:/images/1k/black/QPushButton/normal.png) 3 8 5 8px; border-width: 3 8 5 8px; }");
-	ui->pushButton->setMinimumWidth(30);
-	ui->pushButton->setCheckable(false);
-	ui->pushButton->setText(QString::fromUtf8("否"));
-	connect(ui->pushButton, &QPushButton::clicked, this, &CameraWidget::isRecord);
-
-	ui->closeBtn->setText(QString::fromUtf8("关闭"));
-	connect(ui->modeCombox, SIGNAL(currentIndexChanged(int)), this, SLOT(onComboBoxIndexChanged(int)));
-	connect(ui->closeBtn, &QPushButton::clicked, this, &CameraWidget::closeWidget);
-	connect(ui->statusBtn, &QPushButton::clicked, this, &CameraWidget::on_status_click);
-	ui->statusBtn->setCheckable(false);
-	
-	ui->statusBtn->setText(QString::fromUtf8("关闭"));
-
-	//如果是gdd，不启用此视频
+	setMouseTracking(true);
+	setFixedHeight(800);
+	// 如果是gdd，不启用此视频
 	if (m_videoID != 110505)
 	{
 		for (const auto &infoData : VideoInfoVec)
@@ -60,289 +39,54 @@ CameraWidget::CameraWidget(int videoID, QWidget *parent)
 			}
 		}
 	}
-	
+
+	qDebug() << "CameraWidget创建完成，ID:" << m_videoID;
 }
-void CameraWidget::isRecord()
+
+CameraWidget::~CameraWidget()
 {
+	stopPlay();
 
-	QPushButton *button = qobject_cast<QPushButton*>(sender());
-	if (button == nullptr)
-	{
-		return;
-	}
-	QWidget *widget = qobject_cast<QWidget*>(button->parent());
-	std::map<int, CameraWidget *> cameraWidgetMap = LY_AgriVideoPlayer::Get().GetVideoPlayerMap();
-	if (widget == nullptr || cameraWidgetMap.empty())
-	{
-		return;
-	}
-	int videoID = 0;
-	for (const auto& pair : cameraWidgetMap) {
-		if (pair.second == widget) {
-			videoID = pair.first;
-			break;
+	// 停止所有线程
+	for (auto& pair : m_videoThreadMap) {
+		VideoThread *thread = pair.second;
+		if (thread != nullptr) {
+			thread->stop();
+			thread->wait(1000);
+			delete thread;
 		}
 	}
-	auto it = std::find_if(VideoInfoVec.begin(), VideoInfoVec.end(),
-		[&videoID](const VideoInfoData& data) {
-		return data.id == videoID;
-	});
+	m_videoThreadMap.clear();
 
-	if (it != VideoInfoVec.end()) {
-		it->isOpen = ui->statusBtn->isCheckable();
-	}
-	VideoThread *temp_thread = nullptr;
-	auto ptr = m_videoThreadMap.find(videoID);
-	if (ptr != m_videoThreadMap.end()) {
-		temp_thread = ptr->second;
-	}
-
-	if (ui->pushButton->isCheckable())
-	{
-		ui->pushButton->setCheckable(false);
-		ui->pushButton->setText(QString::fromUtf8("否"));
-		if (temp_thread)
-		{
-			temp_thread->stopRecording(videoID);
-		}
-		
-	}
-	else
-	{
-		ui->pushButton->setCheckable(true);
-		ui->pushButton->setText(QString::fromUtf8("是"));
-		if (temp_thread)
-		{
-			temp_thread->setSegmentDuration(30);
-			temp_thread->startRecording(videoID);
-		}
-	}
-}
-void CameraWidget::on_status_click()
-{
-// 	auto it = std::find_if(VideoInfoVec.begin(), VideoInfoVec.end(),
-// 		[this](const VideoInfoData& data) {
-// 		return data.id == m_videoID;
-// 	});
-// 
-// 	if (it != VideoInfoVec.end()) {
-// 		it->isOpen = ui->statusBtn->isChecked();
-// 	}
-// 
-// 	auto ptr = m_videoThreadMap.find(m_videoID);  
-// 	if (ptr != m_videoThreadMap.end()) {
-// 		VideoThread* util = ptr->second;
-// 		if (util != nullptr)
-// 		{
-// 			util->setVideoInfo(*it);
-// 		}
-// 	}
-}
-void CameraWidget::closeWidget()
-{
-	this->close();
-}
-void CameraWidget::showEvent(QShowEvent *event)
-{
-	
-	
-}
-void CameraWidget::onComboBoxIndexChanged(int index) {
-
-	VideoInfoData videoInfo = ui->modeCombox->currentData().value<VideoInfoData>();
-
-	QString videoID = videoInfo.id;
-
-	if (VideoInfoVec.size() == 0)
-	{
-		return;
-	}
-	auto it = std::find_if(VideoInfoVec.begin(), VideoInfoVec.end(),
-		[&videoID](const VideoInfoData& data) {
-		return data.id == videoID;
-	});
-
-	if (it == VideoInfoVec.end()) {
-		// 未找到满足条件的元素
-		std::cout << "未找到匹配 videoID 的元素" << std::endl;
-	}
-	else {
-		// 找到了满足条件的元素
-		if (it != VideoInfoVec.end()) {
-			it->isOpen = true;
-		}
-		if (index >= 0)
-		{
-			it->model_type = index;
-		}
-		
-		it->id = videoInfo.id;
-		it->url = videoInfo.url;
-		qDebug() << "当前选中索引:" << it->model_type << it->id << it->isOpen;
-
-		auto ptr = m_videoThreadMap.find(it->id);  
-		if (ptr != m_videoThreadMap.end()) {
-			VideoThread* util = ptr->second;
-			if (util != nullptr)
-			{
-				util->setVideoInfo(*it);
-			}
-		}
-	}
-}
-
-
-void CameraWidget::setModelType(int index)
-{
-	VideoInfoData videoInfo = ui->modeCombox->currentData().value<VideoInfoData>();
-
-	QString videoID = videoInfo.id;
-
-	if (VideoInfoVec.size() == 0)
-	{
-		return;
-	}
-	auto it = std::find_if(VideoInfoVec.begin(), VideoInfoVec.end(),
-		[&videoID](const VideoInfoData& data) {
-		return data.id == videoID;
-	});
-
-	if (it == VideoInfoVec.end()) {
-		// 未找到满足条件的元素
-		std::cout << "未找到匹配 videoID 的元素" << std::endl;
-	}
-	else {
-		// 找到了满足条件的元素
-		if (it != VideoInfoVec.end()) {
-			it->isOpen = true;
-		}
-		if (index >= 0)
-		{
-			it->model_type = index;
-		}
-
-		it->id = videoInfo.id;
-		it->url = videoInfo.url;
-		qDebug() << "当前选中索引:" << it->model_type << it->id << it->isOpen;
-
-		auto ptr = m_videoThreadMap.find(it->id);
-		if (ptr != m_videoThreadMap.end()) {
-			VideoThread* util = ptr->second;
-			if (util != nullptr)
-			{
-				util->setVideoInfo(*it);
-			}
-		}
-	}
-}
-void CameraWidget::getOneFrame(QImage img)
-{
-	//qDebug() << "main---" << QThread::currentThread();
-	//m_image = img;
-	//this->update();
+	delete ui;
 }
 
 void CameraWidget::setVideoInfo(VideoInfoData videoInfo)
 {
-	ui->label_5->setText(QString::number(videoInfo.id));
-	for (int i = 0; i < ModelVec.size(); i++)
-	{
-		QString str = ModelVec.at(i);
-		ui->modeCombox->addItem(str, QVariant::fromValue(videoInfo));
-	}
-
 	VideoThread *decoderThread = new VideoThread(this);
-    //decoderThread->setUavID(QString::number(videoInfo.id));
-    decoderThread->setUavID(QString::number(m_videoID));
+	decoderThread->setUavID(QString::number(m_videoID));
 
 	connect(decoderThread, &VideoThread::sendOneFrame,
 		this, &CameraWidget::getOneFrame, Qt::QueuedConnection);
 
 	m_videoThreadMap[videoInfo.id] = decoderThread;
-
-	//// 开始解码
-	//decoderThread->start();
 	decoderThread->startPlay(videoInfo);
-	
-
 }
 
-void CameraWidget::closeEvent(QCloseEvent *event)
+void CameraWidget::getOneFrame(QImage img)
 {
-	this->stopPlay();
-	// 停止所有线程
-	for (auto& pair : m_videoThreadMap) {
-		VideoThread *thread = pair.second;
-		if (thread != nullptr)
-		{
-			thread->stop();
-			thread->wait(1000);
-			delete thread;
-			thread = nullptr;
-		}
-	}
-	m_videoThreadMap.clear();  // 清空 map
+	// 可以在这里处理接收到的帧，如果需要的话
+	// m_image = img;
+	// update();
 }
 
-void CameraWidget::startPlay(VideoInfoData videoInfo)
-{
-	//if (decoderThread)
-	//{
-	//	decoderThread->startPlay(videoInfo);
-	//}
-	
-}
-void CameraWidget::pause(bool state)
-{
-	//if (decoderThread)
-	//{
-	//	decoderThread->pause(state);
-	//}
-	
-}
-void CameraWidget::stopPlay()
-{
-	//if (decoderThread)
-	//{
-	//	decoderThread->stop();
-	//}
-}
-CameraWidget::~CameraWidget()
-{
-	stopPlay();
-	// 停止所有线程
-	for (auto& pair : m_videoThreadMap) {
-		VideoThread *thread = pair.second;
-			if (thread != nullptr)
-			{
-				thread->stop();
-				thread->wait(1000);
-				delete thread;
-				thread = nullptr;
-			}
-	}
-	m_videoThreadMap.clear();  // 清空 map
-
-    delete ui;
-}
-bool CameraWidget::isInResizeArea(const QPoint &pos)
-{
-	return false;
-}
-void CameraWidget::setResizeCursor(const QPoint &pos)
-{
-	
-}
-
-void CameraWidget::setDataSafely(const WS::DetectionData& data)
+void CameraWidget::setData(const WS::DetectionData& data)
 {
 	QMutexLocker locker(&m_dataMutex);
 
-	// 复制数据（使用深拷贝或移动语义）
+	// 深拷贝数据
 	WS::DetectionData newData;
-	newData.image = data.image.copy();  // 关键：深拷贝图像
-
-										// 复制其他字段
+	newData.image = data.image.copy();
 	newData.metadata = data.metadata;
 	newData.bboxes = data.bboxes;
 	newData.polygons = data.polygons;
@@ -351,78 +95,42 @@ void CameraWidget::setDataSafely(const WS::DetectionData& data)
 	QMetaObject::invokeMethod(this, [this, newData]() {
 		{
 			QMutexLocker locker(&m_dataMutex);
-			m_data = std::move(newData);
+			m_data = newData;
+			// 更新框信息列表
+			updateBoxesFromData();
 		}
-		update();  // 在主线程中调用update
+		update();
 	}, Qt::QueuedConnection);
-}
-
-void CameraWidget::setData(const WS::DetectionData& data)
-{
-	//m_data = data;
-	qDebug() << "🔄 setData被调用";
-	qDebug() << "  图像尺寸:" << m_data.image.size();
-	qDebug() << "  元数据尺寸:" << m_data.metadata.width << "x" << m_data.metadata.height;
-	qDebug() << "  bboxes数量:" << m_data.bboxes.size();
-	qDebug() << "  polygons数量:" << m_data.polygons.size();
-
-	//update();
-	setDataSafely(data);
 }
 
 void CameraWidget::paintEvent(QPaintEvent *event)
 {
-	qDebug() << "paintEvent called in thread:" << QThread::currentThreadId();
-	qDebug() << "Widget valid:" << isVisible() << "geometry:" << geometry();
+	Q_UNUSED(event);
 
 	if (m_data.image.isNull()) {
-		qDebug() << "Image is null!";
 		return;
 	}
+
 	QPainter painter(this);
-	QSize s1 = m_data.image.size();
-	if (s1.width() <= 0)
-		return;
+
+	// 设置label的大小与窗口相同
 	ui->label->setGeometry(0, 0, width(), height());
-	//QSize s2 = ui->label->size();
-	QImage img = m_data.image.scaled(ui->label->size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 
-	int x = ui->label->geometry().x();
-	int y = ui->label->geometry().y();
-	painter.drawImage(QPoint(x, y), img);
+	// 缩放图像以适应label
+	QImage img = m_data.image.scaled(ui->label->size(),
+		Qt::IgnoreAspectRatio,
+		Qt::SmoothTransformation);
 
-// 
-// 	if (m_data.image.isNull())
-// 		return;
-// 
-// 	QPainter p(this);
-// 	QRect rc = rect();
-// 
-// 	{
-// 		p.save();
-// 		QPen pen(QColor(0, 255, 255, 250));
-// 		pen.setWidth(6);
-// 		pen.setStyle(Qt::SolidLine);
-// 		p.setPen(pen);
-// 		QRect boderRect = rect().adjusted(1, 1, -1, -1);
-// 		p.drawRect(boderRect);
-// 		p.restore();
-// 	}
-// 
-// 	if (!m_data.image.isNull())
-// 	{
-// 		QRect boderRect = rect().adjusted(2, 2, -2, -2);
-// 		p.drawImage(boderRect, m_data.image);
-// 	}
-// 
-// 	paintRect(p);
+	// 绘制图像
+	painter.drawImage(ui->label->geometry().topLeft(), img);
+
+	// 绘制检测框
+	paintRect(painter);
 }
 
 void CameraWidget::paintRect(QPainter& p)
 {
-	qDebug() << "=== paintRect ===";
-	qDebug() << "bboxes:" << m_data.bboxes.size();
-	qDebug() << "polygons:" << m_data.polygons.size();
+	if (m_data.bboxes.empty()) return;
 
 	// 计算缩放比例
 	int baseWidth = m_data.metadata.width > 0 ? m_data.metadata.width : m_data.image.width();
@@ -430,31 +138,197 @@ void CameraWidget::paintRect(QPainter& p)
 
 	if (baseWidth == 0 || baseHeight == 0) return;
 
-	double widthScale = (width() - 4) * 1.0 / baseWidth;
-	double heightScale = (height() - 4) * 1.0 / baseHeight;
+	double widthScale = width() * 1.0 / baseWidth;
+	double heightScale = height() * 1.0 / baseHeight;
 
-	// 1. 绘制检测框
-	if (!m_data.bboxes.empty()) {
-		p.save();
-		for (const auto& bbox : m_data.bboxes) {
-			// 设置颜色
-			QColor color(bbox.color[0], bbox.color[1], bbox.color[2], 255);
-			QPen pen(color);
-			pen.setWidth(3);
-			p.setPen(pen);
+	p.save();
 
-			// 计算坐标
-			const auto& box = bbox.bbox;
-			double x = box[0] * baseWidth * widthScale;
-			double y = box[1] * baseHeight * heightScale;
-			double w = box[2] * baseWidth * widthScale;
-			double h = box[3] * baseHeight * heightScale;
-
-			// 绘制矩形框
-			p.drawRect(QRectF(x, y, w, h));
+	for (const auto& bbox : m_data.bboxes) {
+		// 设置颜色
+		QColor color(bbox.color[0], bbox.color[1], bbox.color[2], 255);
+		QPen pen(color);
+		//pen.setWidth(3);
+		// ⭐ 判断是否是悬停的框（通过比较指针或trackId）
+		bool isHovered = false;
+		for (const auto& boxInfo : m_currentBoxes) {
+			if (&boxInfo.bbox == &bbox || boxInfo.trackId == bbox.trackId) {
+				if (&boxInfo == m_hoveredBox) {
+					isHovered = true;
+				}
+				break;
+			}
 		}
-		p.restore();
+
+		if (isHovered) {
+			pen.setWidth(5);
+			pen.setColor(Qt::yellow);
+		}
+		else {
+			pen.setWidth(3);
+		}
+
+		p.setPen(pen);
+
+		// 计算坐标
+		const auto& box = bbox.bbox;
+		double x = box[0] * baseWidth * widthScale;
+		double y = box[1] * baseHeight * heightScale;
+		double w = box[2] * baseWidth * widthScale;
+		double h = box[3] * baseHeight * heightScale;
+
+		// 绘制矩形框
+		p.drawRect(QRectF(x, y, w, h));
 	}
 
-	qDebug() << "=== paintRect 完成 ===";
+	p.restore();
+}
+
+void CameraWidget::startPlay(VideoInfoData videoInfo)
+{
+	auto it = m_videoThreadMap.find(videoInfo.id);
+	if (it != m_videoThreadMap.end()) {
+		it->second->startPlay(videoInfo);
+	}
+}
+
+void CameraWidget::stopPlay()
+{
+	for (auto& pair : m_videoThreadMap) {
+		if (pair.second) {
+			pair.second->stop();
+		}
+	}
+}
+
+void CameraWidget::closeEvent(QCloseEvent *event)
+{
+	stopPlay();
+
+	// 停止所有线程
+	for (auto& pair : m_videoThreadMap) {
+		VideoThread *thread = pair.second;
+		if (thread != nullptr) {
+			thread->stop();
+			thread->wait(1000);
+			delete thread;
+		}
+	}
+	m_videoThreadMap.clear();
+
+	event->accept();
+}
+
+//以下函数都被删除了
+// void CameraWidget::on_status_click() { ... }
+// void CameraWidget::onComboBoxIndexChanged(int) { ... }
+// void CameraWidget::closeWidget() { ... }
+// void CameraWidget::isRecord() { ... }
+// void CameraWidget::showEvent(QShowEvent*) { ... }
+// void CameraWidget::setDataSafely(...) { ... }
+
+void CameraWidget::mouseMoveEvent(QMouseEvent *event)
+{
+	// 只保留悬停检测功能
+	const BoxInfo* box = nullptr;
+	for (int i = m_currentBoxes.size() - 1; i >= 0; i--) {
+		if (m_currentBoxes[i].rect.contains(event->pos())) {
+			box = &m_currentBoxes[i];
+			break;
+		}
+	}
+
+	if (box != m_hoveredBox) {
+		m_hoveredBox = box;
+		update();
+	}
+
+	QWidget::mouseMoveEvent(event);
+}
+
+const BoxInfo* CameraWidget::findBoxAtPosition(const QPoint& pos) const
+{
+	// 从后往前遍历，这样上面的框会先被检测到（如果有重叠）
+	for (int i = m_currentBoxes.size() - 1; i >= 0; i--) {
+		if (m_currentBoxes[i].rect.contains(pos)) {
+			return &m_currentBoxes[i];
+		}
+	}
+	return nullptr;
+}
+
+
+void CameraWidget::mousePressEvent(QMouseEvent *event)
+{
+	if (event->button() == Qt::LeftButton) {
+		const BoxInfo* box = findBoxAtPosition(event->pos());
+		if (box) {
+			qDebug() << "=================================";
+			qDebug() << "视频" << m_videoID << "点击了检测框";
+			qDebug() << "  类别:" << box->className;
+			qDebug() << "  置信度:" << box->score;
+			qDebug() << "  跟踪ID:" << box->trackId;
+			qDebug() << "  标签:" << QString::fromStdString(box->bbox.label);
+			qDebug() << "  组ID:" << QString::fromStdString(box->bbox.groupId);
+			qDebug() << "  原始坐标:" << box->bbox.bbox[0] << box->bbox.bbox[1]
+				<< box->bbox.bbox[2] << box->bbox.bbox[3];
+			qDebug() << "=================================";
+
+			// 发送信号
+			emit boxClicked(m_videoID, *box);
+			event->accept();
+			return;
+		}
+	}
+
+	QWidget::mousePressEvent(event);
+}
+
+void CameraWidget::updateBoxesFromData()
+{
+	m_currentBoxes.clear();
+
+	if (m_data.image.isNull() || m_data.bboxes.empty()) return;
+
+	// 计算缩放比例
+	int baseWidth = m_data.metadata.width;
+	int baseHeight = m_data.metadata.height;
+
+	if (baseWidth == 0 || baseHeight == 0) return;
+
+	double widthScale = width() * 1.0 / baseWidth; //宽度比例
+	double heightScale = height() * 1.0 / baseHeight;
+
+	// 遍历所有检测框
+	for (const auto& bbox : m_data.bboxes) {
+		BoxInfo info;
+
+		// 保存原始 BBox 对象
+		info.bbox = bbox;
+		info.score = bbox.score;
+		info.trackId = bbox.trackId;
+
+		// 解析类别名称（从 label 中提取）
+		QString labelStr = QString::fromStdString(bbox.label);
+		if (labelStr.contains(":")) {
+			QStringList parts = labelStr.split(":");
+			info.className = parts.size() > 1 ? parts[1] : parts[0];
+		}
+		else {
+			info.className = labelStr;
+		}
+
+		info.videoId = QString::fromStdString(m_data.metadata.videoid);
+		info.timestamp = 0;  // 如果没有时间戳，设为0
+
+							 // 计算屏幕坐标
+		const auto& box = bbox.bbox;
+		double x = box[0] * widthScale;
+		double y = box[1] * heightScale;
+		double w = box[2] * widthScale;
+		double h = box[3] * heightScale;
+
+		info.rect = QRectF(x, y, w, h);
+
+		m_currentBoxes.append(info);
+	}
 }

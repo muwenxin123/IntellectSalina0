@@ -1,7 +1,11 @@
-#include "DataResult.h"
+ï»¿#include "DataResult.h"
 #include "ui_DataResult.h"
 #include <QCString.h>
 #include <QTimer>
+#include <QDebug>
+#include <QThread>
+#include <QDialog>
+#include <QScrollBar>
 #include <QDebug>
 DataResult::DataResult(QWidget *parent) :
     QWidget(parent),
@@ -10,24 +14,139 @@ DataResult::DataResult(QWidget *parent) :
 {
     ui->setupUi(this);
 	initTable();
+	initImageDialog();
 	connect(ui->pushButton_1, &QPushButton::clicked, this, &DataResult::switchTo1);
 	connect(ui->pushButton_2, &QPushButton::clicked, this, &DataResult::switchTo2);
 	connect(ui->pushButton_3, &QPushButton::clicked, this, &DataResult::switchTo3);
 	connect(ui->pushButton_4, &QPushButton::clicked, this, &DataResult::switchTo4);
 	connect(ui->pushButton_5, &QPushButton::clicked, this, &DataResult::switchTo5);
 
+
 	m_timer = new QTimer(this);
 	connect(m_timer, &QTimer::timeout, this, &DataResult::onDetectionDataReceived);
 	m_timer->start(1000);
 }
+void DataResult::initImageDialog()
+{
+	m_imageDialog = new QDialog(this);
+	m_imageDialog->setWindowTitle(tr2("å›¾ç‰‡è¯¦æƒ…"));
+	m_imageDialog->resize(1200, 900);
+
+	QVBoxLayout* layout = new QVBoxLayout(m_imageDialog);
+	layout->setContentsMargins(0, 0, 0, 0);
+	//QScrollArea* scrollArea = new QScrollArea(m_imageDialog);
+	//scrollArea->setWidgetResizable(true);
+
+	m_imageDisplayLabel = new QLabel();
+	m_imageDisplayLabel->setAlignment(Qt::AlignCenter);
+	m_imageDisplayLabel->setStyleSheet("QLabel{ background-color:#2b2b2b;}");
+	m_imageDisplayLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+	//scrollArea->setWidget(m_imageDisplayLabel);
+	//layout->addWidget(scrollArea);
+	layout->addWidget(m_imageDisplayLabel, 1);  // 1 è¡¨ç¤ºæ‹‰ä¼¸å› å­
+
+	QPushButton* closeBtn = new QPushButton(tr2("å…³é—­"), m_imageDialog);
+	closeBtn->setFixedSize(100, 30);
+	connect(closeBtn, &QPushButton::clicked, m_imageDialog, &QDialog::accept);
+	layout->addWidget(closeBtn, 0, Qt::AlignCenter);
+}
+
+void DataResult::showImageDialog(const QImage& image, const int& info)
+{
+	QWriteLocker lk(&m_readLock);
+
+	if (image.isNull()) {
+		return;
+	}
+	
+	if (image.width() <= 0 || image.height() <= 0) {
+		return;
+	}
+
+	if (image.format() == QImage::Format_Invalid) {
+		return;
+	}
+
+	if (!m_imageDialog) {
+		initImageDialog();
+	}
+	
+	if (!m_imageDialog || !m_imageDisplayLabel)
+		return;
+
+	QPixmap pixmap;
+	try {
+		pixmap = QPixmap::fromImage(image);
+		if (pixmap.isNull()) {
+			qDebug() << "âŒ è½¬æ¢å¤±è´¥";
+			return;
+		}
+	}
+	catch (...) {
+		qDebug() << "âŒ è½¬æ¢å¼‚å¸¸";
+		return;
+	}
+
+	m_imageDisplayLabel->setPixmap(pixmap);
+	m_imageDisplayLabel->setScaledContents(true);
+
+	m_imageDialog->resize(800, 600);
+	if (!info ==NULL) {
+		m_imageDialog->setWindowTitle(tr2("å›¾ç‰‡è¯¦æƒ… è¯†åˆ«æ€»æ•°- ") + QString::number(info));
+	}
+
+	m_imageDialog->show();
+	m_imageDialog->raise();
+}
 
 DataResult::~DataResult()
 {
+	m_isShuttingDown = true;
+
+	if (m_timer) {
+		m_timer->stop();
+		m_timer->deleteLater();
+		m_timer = nullptr;
+	}
+
+	if (m_imageDialog) {
+		m_imageDialog->close();  // å…³é—­å¯¹è¯æ¡†
+		m_imageDialog->deleteLater();
+		m_imageDialog = nullptr;
+	}
+
+	{
+		QWriteLocker locker(&m_readLock);
+		eventdatavec.clear();
+	}
+
+	disconnect();
+
+	//QCoreApplication::processEvents();
+
     delete ui;
 }
+
+void DataResult::shutdown() {
+	m_isShuttingDown = true;
+
+	if (m_timer) {
+		m_timer->stop();
+		m_timer->disconnect();
+		qDebug() <<"stop finish";
+	}
+
+	disconnect();
+	if (m_imageDialog) {
+		m_imageDialog->close();
+	}
+
+}
+
 void DataResult::initTable() {
 	QStringList headerlabels;
-	headerlabels << tr2("Ê±¼ä") << tr2("Ê¶±ğÍ¼Ïñ");
+	headerlabels << tr2("æ—¶é—´") << tr2("è¯†åˆ«å›¾åƒ");
 
 	ui->tableWidget->setColumnCount(headerlabels.size());
 	ui->tableWidget->setHorizontalHeaderLabels(headerlabels);
@@ -37,10 +156,10 @@ void DataResult::initTable() {
 	ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	ui->tableWidget->setAlternatingRowColors(true);
 	ui->tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-	//ÉèÖÃÁĞÊı
+	//è®¾ç½®åˆ—æ•°
 	ui->tableWidget->setRowCount(0);
 
-	//ÉèÖÃ±í¸ñÊôĞÔ
+	//è®¾ç½®è¡¨æ ¼å±æ€§
 	ui->tableWidget->horizontalHeader()->setStretchLastSection(true);
 
 	ui->tableWidget_2->setColumnCount(headerlabels.size());
@@ -51,10 +170,10 @@ void DataResult::initTable() {
 	ui->tableWidget_2->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	ui->tableWidget_2->setAlternatingRowColors(true);
 	ui->tableWidget_2->setContextMenuPolicy(Qt::CustomContextMenu);
-	//ÉèÖÃÁĞÊı
+	//è®¾ç½®åˆ—æ•°
 	ui->tableWidget_2->setRowCount(0);
 
-	//ÉèÖÃ±í¸ñÊôĞÔ
+	//è®¾ç½®è¡¨æ ¼å±æ€§
 	ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
 
 	ui->tableWidget_3->setColumnCount(headerlabels.size());
@@ -65,10 +184,10 @@ void DataResult::initTable() {
 	ui->tableWidget_3->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	ui->tableWidget_3->setAlternatingRowColors(true);
 	ui->tableWidget_3->setContextMenuPolicy(Qt::CustomContextMenu);
-	//ÉèÖÃÁĞÊı
+	//è®¾ç½®åˆ—æ•°
 	ui->tableWidget_3->setRowCount(0);
 
-	//ÉèÖÃ±í¸ñÊôĞÔ
+	//è®¾ç½®è¡¨æ ¼å±æ€§
 	ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
 
 	ui->tableWidget_4->setColumnCount(headerlabels.size());
@@ -79,11 +198,26 @@ void DataResult::initTable() {
 	ui->tableWidget_4->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	ui->tableWidget_4->setAlternatingRowColors(true);
 	ui->tableWidget_4->setContextMenuPolicy(Qt::CustomContextMenu);
-	//ÉèÖÃÁĞÊı
+	//è®¾ç½®åˆ—æ•°
 	ui->tableWidget_4->setRowCount(0);
 
-	//ÉèÖÃ±í¸ñÊôĞÔ
+	//è®¾ç½®è¡¨æ ¼å±æ€§
 	ui->tableWidget_4->horizontalHeader()->setStretchLastSection(true);
+
+	ui->tableWidget_5->setColumnCount(headerlabels.size());
+	ui->tableWidget_5->setHorizontalHeaderLabels(headerlabels);
+	ui->tableWidget_5->verticalHeader()->setHidden(true);
+	ui->tableWidget_5->setSelectionBehavior(QTableWidget::SelectRows);
+	ui->tableWidget_5->setSelectionMode(QAbstractItemView::SingleSelection);
+	ui->tableWidget_5->setEditTriggers(QAbstractItemView::NoEditTriggers);
+	ui->tableWidget_5->setAlternatingRowColors(true);
+	ui->tableWidget_5->setContextMenuPolicy(Qt::CustomContextMenu);
+	//è®¾ç½®åˆ—æ•°
+	ui->tableWidget_5->setRowCount(0);
+
+	//è®¾ç½®è¡¨æ ¼å±æ€§
+	ui->tableWidget_5->horizontalHeader()->setStretchLastSection(true);
+	//ui->pushButton_1;
 }
 
 void DataResult::switchTo1() {
@@ -103,125 +237,308 @@ void DataResult::switchTo5() {
 }
 
 
+//void DataResult::addImage(const WS::EventData& data)
+//{
+//	//// è·å–å½“å‰é¡µé¢çš„widget
+//	//QScrollArea* scrollArea = qobject_cast<QScrollArea*>(ui->stackedWidget->currentWidget());
+//	//if (!scrollArea) {
+//	//	return;
+//	//}
+//
+//	//// è·å–å†…å®¹widgetå’Œå¸ƒå±€
+//	//QWidget* contentWidget = scrollArea->widget();
+//	//if (!contentWidget) {
+//	//	return;
+//	//}
+//
+//	//QGridLayout* layout = qobject_cast<QGridLayout*>(contentWidget->layout());
+//	//if (!layout) {
+//	//	// å¦‚æœæ²¡æœ‰å¸ƒå±€ï¼Œåˆ›å»ºä¸€ä¸ª
+//	//	layout = new QGridLayout(contentWidget);
+//	//	layout->setSpacing(10);
+//	//	layout->setAlignment(Qt::AlignTop);
+//	//}
+//
+//	//// è®¡ç®—æ–°å›¾ç‰‡çš„ä½ç½®
+//	//int count = layout->count();
+//	//int row = count / 3;    // æ¯è¡Œ3ä¸ªå›¾ç‰‡
+//	//int col = count % 3;
+//
+//	//// åˆ›å»ºå›¾ç‰‡Label
+//	//QLabel *imageLabel = new QLabel();
+//	//QPixmap pixmap = QPixmap::fromImage(image);
+//	//if (!pixmap.isNull()) {
+//	//	pixmap = pixmap.scaled(200, 150, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+//	//	imageLabel->setPixmap(pixmap);
+//	//}
+//	//imageLabel->setAlignment(Qt::AlignCenter);
+//	//imageLabel->setStyleSheet("border: 1px solid gray; background-color: white;");
+//
+//	//// æ·»åŠ åˆ°ç½‘æ ¼å¸ƒå±€
+//	//layout->addWidget(imageLabel, row, col);
+//
+//
+//	QWriteLocker lk(&m_readLock);
+//	// æ·»åŠ åˆ°äº‹ä»¶å‘é‡ï¼ˆåœ¨å¼€å¤´æ’å…¥ï¼Œä¿æŒæœ€æ–°æ•°æ®åœ¨æœ€å‰é¢ï¼‰
+//	eventdatavec.push_back(data);
+//	if (eventdatavec.size() > 60)
+//	{
+//		eventdatavec.erase(eventdatavec.begin());
+//	}
+//
+//}
+
 void DataResult::addImage(const WS::EventData& data)
 {
-	//// »ñÈ¡µ±Ç°Ò³ÃæµÄwidget
-	//QScrollArea* scrollArea = qobject_cast<QScrollArea*>(ui->stackedWidget->currentWidget());
-	//if (!scrollArea) {
-	//	return;
-	//}
+	// çº¿ç¨‹å®‰å…¨æ£€æŸ¥
+	if (QThread::currentThread() != this->thread()) {
+		qDebug() << "DataResult::addImage è·¨çº¿ç¨‹è°ƒç”¨";
 
-	//// »ñÈ¡ÄÚÈİwidgetºÍ²¼¾Ö
-	//QWidget* contentWidget = scrollArea->widget();
-	//if (!contentWidget) {
-	//	return;
-	//}
+		// å¤åˆ¶æ•°æ®
+		WS::EventData dataCopy = data;
 
-	//QGridLayout* layout = qobject_cast<QGridLayout*>(contentWidget->layout());
-	//if (!layout) {
-	//	// Èç¹ûÃ»ÓĞ²¼¾Ö£¬´´½¨Ò»¸ö
-	//	layout = new QGridLayout(contentWidget);
-	//	layout->setSpacing(10);
-	//	layout->setAlignment(Qt::AlignTop);
-	//}
+		QMetaObject::invokeMethod(this, [this, dataCopy]() {
+			QWriteLocker lk(&m_readLock);
+			eventdatavec.push_back(dataCopy);
 
-	//// ¼ÆËãĞÂÍ¼Æ¬µÄÎ»ÖÃ
-	//int count = layout->count();
-	//int row = count / 3;    // Ã¿ĞĞ3¸öÍ¼Æ¬
-	//int col = count % 3;
-
-	//// ´´½¨Í¼Æ¬Label
-	//QLabel *imageLabel = new QLabel();
-	//QPixmap pixmap = QPixmap::fromImage(image);
-	//if (!pixmap.isNull()) {
-	//	pixmap = pixmap.scaled(200, 150, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-	//	imageLabel->setPixmap(pixmap);
-	//}
-	//imageLabel->setAlignment(Qt::AlignCenter);
-	//imageLabel->setStyleSheet("border: 1px solid gray; background-color: white;");
-
-	//// Ìí¼Óµ½Íø¸ñ²¼¾Ö
-	//layout->addWidget(imageLabel, row, col);
-
-
-	QReadLocker lk(&m_readLock);
-	// Ìí¼Óµ½ÊÂ¼şÏòÁ¿£¨ÔÚ¿ªÍ·²åÈë£¬±£³Ö×îĞÂÊı¾İÔÚ×îÇ°Ãæ£©
-	eventdatavec.push_back(data);
-	if (eventdatavec.size() > 60)
-	{
-		eventdatavec.erase(eventdatavec.begin());
+			if (eventdatavec.size() > 60) {
+				eventdatavec.erase(eventdatavec.begin());
+			}
+		}, Qt::QueuedConnection);
 	}
+	else {
+		QWriteLocker lk(&m_readLock);
+		eventdatavec.push_back(data);
 
+		if (eventdatavec.size() > 60) {
+			eventdatavec.erase(eventdatavec.begin());
+		}
+	}
 }
-
 //void DataResult::addRect(const QPainter& p) {
 //	eventdatavec.push_back(p);
 //}
+//void DataResult::onDetectionDataReceived() {
+//	QReadLocker lk(&m_readLock);
+//	std::vector<WS::EventData> tempVec = eventdatavec;
+//	lk.unlock();
+//
+//	// 1. åˆ›å»ºvideoidåˆ°tableWidgetçš„æ˜ å°„
+//	QMap<QString, QTableWidget*> tableMap;
+//	tableMap["v1"] = ui->tableWidget;
+//	tableMap["v2"] = ui->tableWidget_2;
+//	tableMap["v3"] = ui->tableWidget_3;
+//	tableMap["v4"] = ui->tableWidget_4;
+//	tableMap["av_stream"] = ui->tableWidget_5;
+//
+//	// 2. å…ˆé‡ç½®æ‰€æœ‰è¡¨æ ¼
+//	for (auto* table : tableMap.values()) {
+//		if (table) {
+//			table->clearContents();
+//			table->setRowCount(0);
+//		}
+//	}
+//
+//	// 3. æŒ‰videoidåˆ†ç»„
+//	QMap<QString, QList<const WS::EventData*>> groupedData;
+//	for (const auto& event : tempVec) {
+//		groupedData[QString::fromStdString(event.videoid)].append(&event);
+//	}
+//
+//	// 4. å¡«å……æ¯ä¸ªè¡¨æ ¼
+//	for (auto it = tableMap.begin(); it != tableMap.end(); ++it) {
+//		const QString& vid = it.key();
+//		QTableWidget* table = it.value();
+//
+//		if (!groupedData.contains(vid) || !table) {
+//			continue;
+//		}
+//
+//		const auto& events = groupedData[vid];
+//		table->setRowCount(events.size());
+//
+//		// é€†åºå¡«å……ï¼šæœ€æ–°çš„æ•°æ®åœ¨ç¬¬0è¡Œ
+//		for (int i = 0; i < events.size(); i++) {
+//			int row = events.size() - i - 1; // é€†åºç´¢å¼•
+//			const auto* event = events[i];
+//
+//			// è®¾ç½®æ—¶é—´
+//			table->setItem(row, 0,
+//				new QTableWidgetItem(event->time.toString("hh:mm:ss")));
+//
+//			// è®¾ç½®äº‹ä»¶å†…å®¹
+//			if (!event->eventcontent.isEmpty() && table->columnCount() > 2) {
+//				table->setItem(row, 2,
+//					new QTableWidgetItem(event->eventcontent));
+//			}
+//
+//			// è®¾ç½®å›¾åƒ
+//			QLabel *imageLabel = new QLabel();
+//			QPixmap pixmap = QPixmap::fromImage(event->image);
+//			if (!pixmap.isNull()) {
+//				pixmap = pixmap.scaled(300, 250, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+//				imageLabel->setPixmap(pixmap);
+//				imageLabel->setAlignment(Qt::AlignCenter);
+//			}
+//
+//			table->setRowHeight(row, 300);
+//			table->setCellWidget(row, 1, imageLabel);
+//		}
+//	}
+//}
+
 void DataResult::onDetectionDataReceived() {
 	QReadLocker lk(&m_readLock);
 	std::vector<WS::EventData> tempVec = eventdatavec;
 	lk.unlock();
 
-	// 1. ´´½¨videoidµ½tableWidgetµÄÓ³Éä
+	// 1. åˆ›å»ºvideoidåˆ°tableWidgetçš„æ˜ å°„
 	QMap<QString, QTableWidget*> tableMap;
 	tableMap["v1"] = ui->tableWidget;
 	tableMap["v2"] = ui->tableWidget_2;
 	tableMap["v3"] = ui->tableWidget_3;
 	tableMap["v4"] = ui->tableWidget_4;
-	tableMap["v5"] = ui->tableWidget_5;
+	tableMap["av_stream"] = ui->tableWidget_5;
 
-	// 2. ÏÈÖØÖÃËùÓĞ±í¸ñ
-	for (auto* table : tableMap.values()) {
-		if (table) {
-			table->clearContents();
-			table->setRowCount(0);
-		}
-	}
-
-	// 3. °´videoid·Ö×é
+	// 2. æŒ‰videoidåˆ†ç»„
 	QMap<QString, QList<const WS::EventData*>> groupedData;
 	for (const auto& event : tempVec) {
 		groupedData[QString::fromStdString(event.videoid)].append(&event);
 	}
 
-	// 4. Ìî³äÃ¿¸ö±í¸ñ
+	// 3. æ›´æ–°æ¯ä¸ªè¡¨æ ¼ï¼ˆé™åˆ¶æœ€å¤š10è¡Œï¼‰
 	for (auto it = tableMap.begin(); it != tableMap.end(); ++it) {
 		const QString& vid = it.key();
 		QTableWidget* table = it.value();
 
 		if (!groupedData.contains(vid) || !table) {
+			// å¦‚æœæ²¡æœ‰è¿™ä¸ªè§†é¢‘æµçš„æ–°æ•°æ®ï¼Œè·³è¿‡
 			continue;
 		}
 
 		const auto& events = groupedData[vid];
-		table->setRowCount(events.size());
 
-		// ÄæĞòÌî³ä£º×îĞÂµÄÊı¾İÔÚµÚ0ĞĞ
+		int scrollValue = 0;
+		if (table->verticalScrollBar()) {
+			scrollValue = table->verticalScrollBar()->value();
+
+		}
+
+		// è·å–å½“å‰è¡¨æ ¼çš„è¡Œæ•°
+		int currentRows = table->rowCount();
+
+		// è®¡ç®—éœ€è¦æ·»åŠ çš„æ–°è¡Œæ•°
+		int newRows = events.size();
+
+		// è®¡ç®—æ€»è¡Œæ•°ï¼ˆå½“å‰ + æ–°æ•°æ®ï¼‰
+		int totalRows = currentRows + newRows;
+
+		if (totalRows > 100) {
+			// å¦‚æœè¶…è¿‡10è¡Œï¼Œéœ€è¦åˆ é™¤æœ€æ—§çš„è¡Œ
+			int rowsToRemove = totalRows - 100;
+
+			// åˆ é™¤æœ€æ—§çš„è¡Œï¼ˆä»ç¬¬0è¡Œå¼€å§‹åˆ é™¤ï¼‰
+			for (int i = 0; i < rowsToRemove; i++) {
+				table->removeRow(0);
+			}
+
+			// æ›´æ–°å½“å‰è¡Œæ•°
+			currentRows = table->rowCount();
+		}
+
+		// æ·»åŠ æ–°æ•°æ®åˆ°è¡¨æ ¼æœ«å°¾
 		for (int i = 0; i < events.size(); i++) {
-			int row = events.size() - i - 1; // ÄæĞòË÷Òı
+			int row = currentRows + i;
+			if (row >= 100) break;  // ç¡®ä¿ä¸è¶…è¿‡10è¡Œ
+
 			const auto* event = events[i];
 
-			// ÉèÖÃÊ±¼ä
+			// å¦‚æœè¡Œæ•°ä¸å¤Ÿï¼Œæ’å…¥æ–°è¡Œ
+			if (row >= table->rowCount()) {
+				table->insertRow(row);
+			}
+
+			// è®¾ç½®æ—¶é—´
 			table->setItem(row, 0,
 				new QTableWidgetItem(event->time.toString("hh:mm:ss")));
 
-			// ÉèÖÃÊÂ¼şÄÚÈİ
+			// è®¾ç½®äº‹ä»¶å†…å®¹
 			if (!event->eventcontent.isEmpty() && table->columnCount() > 2) {
-				table->setItem(row, 2,
-					new QTableWidgetItem(event->eventcontent));
+				table->setItem(row, 2,new QTableWidgetItem(event->eventcontent));
 			}
 
-			// ÉèÖÃÍ¼Ïñ
-			QLabel *imageLabel = new QLabel();
-			QPixmap pixmap = QPixmap::fromImage(event->image);
+			// è®¾ç½®å›¾åƒ
+			//QLabel *imageLabel = new QLabel();
+			//QPixmap pixmap = QPixmap::fromImage(event->image);
+			//if (!pixmap.isNull()) {
+			//	pixmap = pixmap.scaled(300, 250, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+			//	imageLabel->setPixmap(pixmap);
+			//	imageLabel->setAlignment(Qt::AlignCenter);
+			//}
+			//table->setRowHeight(row, 300);
+			//table->setCellWidget(row, 1, imageLabel);
+
+
+					//ClickableImageLabel* imageLabel = new ClickableImageLabel();
+			//imageLabel->setOriginalImage(event->image);
+
+			//QPixmap pixmap = QPixmap::fromImage(event->image);
+			//if (!pixmap.isNull()) {
+			//	QPixmap scaled = pixmap.scaled(300, 250, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+			//	imageLabel->setPixmap(scaled);
+			//	imageLabel->setAlignment(Qt::AlignCenter);
+			//	connect(imageLabel, &ClickableImageLabel::clicked, this, [this, event](){this->showImageDialog(event->image, event->eventcontent); },
+			//Qt::QueuedConnection);
+			//}
+//å¼¹çª—å¼å›¾ç‰‡æ˜¾ç¤ºåŠŸèƒ½
+			QImage imageCopy = event->image.copy(); 
+			int totalBoxesInThisImage = event->totalBoxesInImage;
+			ClickableImageLabel* imageLabel = new ClickableImageLabel();
+			imageLabel->setOriginalImage(imageCopy);  // ä¿å­˜åŸå›¾ç”¨äºå¼¹çª—
+
+			QPixmap pixmap = QPixmap::fromImage(imageCopy);
 			if (!pixmap.isNull()) {
 				pixmap = pixmap.scaled(300, 250, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 				imageLabel->setPixmap(pixmap);
 				imageLabel->setAlignment(Qt::AlignCenter);
+				//lambdaåŒ¿åå‡½æ•°ï¼Œc++11å¼•å…¥ï¼Œå¯ä»¥å°±åœ°å®šä¹‰å’Œä½¿ç”¨
+				//ä½¿ç”¨ lambda ç›´æ¥è°ƒç”¨ showImageDialog
+				//connect(imageLabel, &ClickableImageLabel::clicked,
+				//	[this, imageCopy, totalBoxesInThisImage]() {
+				//	this->showImageDialog(imageCopy, totalBoxesInThisImage);
+				//});
+				/////////////////////////////////////////////////////////
+				//connect(imageLabel, &ClickableImageLabel::clicked, this,  
+				//	[this, imageCopy, totalBoxesInThisImage]() {
+				//	if (!m_isShuttingDown) {  
+				//		this->showImageDialog(imageCopy, totalBoxesInThisImage);
+				//	}
+				//}, Qt::UniqueConnection);
+				// åœ¨ DataResult.cpp çš„ onDetectionDataReceived ä¸­
+				connect(imageLabel, &ClickableImageLabel::clicked, this,
+					[this, imageCopy, eventData = *event]() {  // â­ ç›´æ¥æ‹·è´æ•´ä¸ª EventData
+					if (!m_isShuttingDown) {
+						ImageDetailDialog* dialog = new ImageDetailDialog(this);
+						dialog->setAttribute(Qt::WA_DeleteOnClose);
+						dialog->setImage(imageCopy);
+						dialog->setEventData(eventData);  // ä½¿ç”¨æ‹·è´çš„æ•°æ®
+						dialog->show();
+					}
+				}, Qt::UniqueConnection);
 			}
 
 			table->setRowHeight(row, 300);
 			table->setCellWidget(row, 1, imageLabel);
+		} 
+		if (table->verticalScrollBar()) {
+			// ä¿æŒç”¨æˆ·ä½ç½®ä¸å˜
+			table->verticalScrollBar()->setValue(scrollValue);
 		}
+	}
+
+	// æ¸…ç©ºä¸´æ—¶æ•°æ®ï¼ˆé¿å…é‡å¤å¤„ç†ï¼‰
+	{
+		QWriteLocker lk(&m_readLock);
+		eventdatavec.clear();
 	}
 }

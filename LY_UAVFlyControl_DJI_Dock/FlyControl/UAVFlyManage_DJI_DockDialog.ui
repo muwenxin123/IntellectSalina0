@@ -1,0 +1,592 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UAVFlyManage_DJI_DockDialog</class>
+ <widget class="QWidget" name="UAVFlyManage_DJI_DockDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>680</width>
+    <height>1100</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QGroupBox" name="groupBox_DJI_Dock_Dock_Drone_Selected">
+     <property name="title">
+      <string>机场 无人机 选择</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout"/>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_DJI_Dock_Dock_Control">
+     <property name="title">
+      <string> 机场远程调试</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_debug_mode_open">
+        <property name="text">
+         <string>调试模式开启</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_debug_mode_close">
+        <property name="text">
+         <string>调试模式关闭</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_cover_open">
+        <property name="text">
+         <string>打开舱盖</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_cover_close">
+        <property name="text">
+         <string>关闭舱盖</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_drone_open">
+        <property name="text">
+         <string>飞行器开机</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_drone_close">
+        <property name="text">
+         <string>飞行器关机</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_supplement_light_open">
+        <property name="text">
+         <string>打开补光灯</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_supplement_light_close">
+        <property name="text">
+         <string>关闭补光灯</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_charge_open">
+        <property name="text">
+         <string>打开充电</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_charge_close">
+        <property name="text">
+         <string>关闭充电</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_DJI_Dock_Video_Control">
+     <property name="title">
+      <string>视频控制</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="1" column="2">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_Video_Control_Drone_Ire">
+        <property name="text">
+         <string>无人机-红外</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_Video_Control_Drone_Light">
+        <property name="text">
+         <string>无人机-可见光</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_Video_Control_Dock_Light">
+        <property name="text">
+         <string>机场-可见光</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_Video_Control_Dock_Ire">
+        <property name="text">
+         <string>机场-红外</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_Video_Control_Dock_Close">
+        <property name="text">
+         <string>机场-关闭</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_Video_Control_Drone_Close">
+        <property name="text">
+         <string>无人机-关闭</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QComboBox" name="comboBox_DJI_Dock_Video_Control_Dock_Video_Quality">
+        <item>
+         <property name="text">
+          <string>0 自适应</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>1 流畅960*540 1Mbps</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>2 标清1280*720 1Mbps</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>3 高清1280*720 1.5Mbps</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>4 超清1920*1080 8Mbps</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QComboBox" name="comboBox_DJI_Dock_Video_Control_Drone_Video_Quality">
+        <item>
+         <property name="text">
+          <string>0 自适应</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>1 流畅960*540 1Mbps</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>2 标清1280*720 1Mbps</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>3 高清1280*720 1.5Mbps</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>4 超清1920*1080 8Mbps</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_DJI_Dock_Payload_Control">
+     <property name="title">
+      <string>载荷控制</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_5">
+      <item row="0" column="2">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_Video_Control_Open_5">
+        <property name="text">
+         <string>机场-可见光</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_Video_Control_Open_8">
+        <property name="text">
+         <string>无人机-红外</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_Video_Control_Open_7">
+        <property name="text">
+         <string>无人机-可见光</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_Video_Control_Open_6">
+        <property name="text">
+         <string>可见光-红外</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>云台控制</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_6">
+      <item row="0" column="0" colspan="2">
+       <layout class="QGridLayout" name="gridLayout_7" columnstretch="3,3,3,0">
+        <item row="0" column="2">
+         <widget class="QPushButton" name="pushButton_DJICameraControl_Photograph">
+          <property name="text">
+           <string>拍照</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QPushButton" name="pushButton_DJICameraControl_Video">
+          <property name="text">
+           <string>开始录像</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="pushButton_DJICameraControl_Up">
+          <property name="text">
+           <string>上</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QPushButton" name="pushButton_DJICameraControl_Left">
+          <property name="text">
+           <string>左</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QPushButton" name="pushButton_DJICameraControl_visibleLight">
+          <property name="text">
+           <string>可见光</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QPushButton" name="pushButton_DJICameraControl_Right">
+          <property name="text">
+           <string>右</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QPushButton" name="pushButton_DJICameraControl_Down">
+          <property name="text">
+           <string>下</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QPushButton" name="pushButton_DJICameraControl_Center">
+          <property name="text">
+           <string>归中</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QPushButton" name="pushButton_DJICameraControl_VerticalUp">
+          <property name="text">
+           <string>垂直下视</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="QComboBox" name="comboBox_camera_mode_switch">
+          <item>
+           <property name="text">
+            <string>-1</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>0：拍照</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>1：录像</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>2：智能低光</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>3：全景拍照</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="2" column="3">
+         <widget class="QPushButton" name="pushButton_DJICameraControl_Video_stop">
+          <property name="text">
+           <string>停止录像</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_20">
+        <property name="text">
+         <string>变焦：</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSlider" name="horizontalSlider_DJICameraControl_FocalLength">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_DJI_Dock__Drone_WayLine_Control">
+     <property name="title">
+      <string>任务航线管理</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="1" column="0">
+       <widget class="QPushButton" name="pushButton_DJI_Dock__Drone_WayLine_Control_FlightTask_Pause">
+        <property name="text">
+         <string>航线暂停</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="pushButton_DJI_Dock__Drone_WayLine_Control_FlightTask_Execute">
+        <property name="text">
+         <string>执行任务</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="pushButton_DJI_Dock__Drone_WayLine_Control_FlightTask_Undo">
+        <property name="text">
+         <string> 取消任务</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2">
+       <widget class="QPushButton" name="pushButton_39">
+        <property name="text">
+         <string>取消空中航线</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QPushButton" name="pushButton_DJI_Dock__Drone_WayLine_Control_Return_Home_Cancel">
+        <property name="text">
+         <string>取消返航</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="pushButton_DJI_Dock__Drone_WayLine_Control_FlightTask_Recovery">
+        <property name="text">
+         <string>航线恢复</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QPushButton" name="pushButton_DJI_Dock__Drone_WayLine_Control_FlightTask_Prepare">
+        <property name="text">
+         <string>下发任务</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QPushButton" name="pushButton_DJI_Dock__Drone_WayLine_Control_Return_Home">
+        <property name="text">
+         <string>一键返航</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_WayLine_Control_Flysendroute">
+        <property name="text">
+         <string>空中下发航线</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_WayLine_Uploading">
+        <property name="text">
+         <string>航线上传</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_WayLine_AirRoute_Stop">
+        <property name="text">
+         <string>暂停空中航线</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_WayLine_AirRoute_Recover">
+        <property name="text">
+         <string>恢复空中航线</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_WayLine_SelectedHome_ReturnRoute">
+        <property name="text">
+         <string>指定home点的返航</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QPushButton" name="pushButton_35">
+        <property name="text">
+         <string>任务终止 蛙跳</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QPushButton" name="pushButton_26">
+        <property name="text">
+         <string>任务终止 蛙跳</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_DJI_Dock__Drone_Command_Control">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="title">
+      <string>指令飞行</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <widget class="QPushButton" name="pushButton_command_flight_control_compete">
+        <property name="text">
+         <string>飞行控制权抢夺</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="pushButton_command_payload_anthority_grab">
+        <property name="text">
+         <string>负载控制权抢夺 </string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_Command_DRCMode_enter">
+        <property name="text">
+         <string>进入指令飞行控制模式</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_Command_DRCMode_exit">
+        <property name="text">
+         <string>退出指令飞行控制模式</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="pushButton_command_flyto_targetpoint">
+        <property name="text">
+         <string> flyto 飞向目标点</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QPushButton" name="pushButton_command_flyto_updatapoint">
+        <property name="text">
+         <string>更新 flyto 目标点</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QPushButton" name="pushButton_command_flyto_endtask">
+        <property name="text">
+         <string> 结束 flyto 飞向目标点任务</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QPushButton" name="pushButton_DJI_Dock_Command_DRCemergency_Stop">
+        <property name="text">
+         <string>DRC急停</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>一键起飞</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_8">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkBox_current_task">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="pushButton_takeoff_load_task">
+        <property name="text">
+         <string>导入任务</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="pushButton_takeoff_to_point">
+        <property name="text">
+         <string>一键起飞</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

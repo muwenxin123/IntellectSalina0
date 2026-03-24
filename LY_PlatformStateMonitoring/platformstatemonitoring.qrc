@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/PlatformStateMonitoring">
+        <file>state_blue.png</file>
+        <file>state_grey.png</file>
+        <file>state_red.png</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,11 @@
+﻿#ifndef LY_CONCENTRATIONSERVICE_GLOBAL_H_
+#define LY_CONCENTRATIONSERVICE_GLOBAL_H_
+ 
+#include <QtCore/qglobal.h>
+
+#if defined(LY_CONCENTRATIONSERVICE_LIBRARY)
+#  define LY_CONCENTRATIONSERVICE_EXPORT Q_DECL_EXPORT
+#else
+#  define LY_CONCENTRATIONSERVICE_EXPORT Q_DECL_IMPORT
+#endif
+#endif  // LY_ConcentrationService_global_H

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AgriMachineDailyProductReport</class>
+ <widget class="QWidget" name="AgriMachineDailyProductReport">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>367</width>
+    <height>144</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QTableWidget" name="tableWidget">
+     <column>
+      <property name="text">
+       <string>序号</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>起始时间</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>结束时间</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>持续时间</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>行走距离</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>最高水温</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>最低水温</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>平均水温</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>油耗</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

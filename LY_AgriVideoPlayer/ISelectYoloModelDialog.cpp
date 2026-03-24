@@ -326,6 +326,18 @@ void ISelectYoloModelDialog::on_topButon_clicked(QString buttonName)
 
 void ISelectYoloModelDialog::on_buttomButton_clicked(QString buttonName)
 {
+	//// 1. 立即禁用所有相关按钮
+	//for (ModelPushButton* mitem : m_buttomButtonList.keys()) {
+	//	mitem->setEnabled(false);
+	//}
+
+	//// 2. 设置1秒后重新启用的定时器
+	//QTimer::singleShot(1000, this, [this]() {
+	//	for (ModelPushButton* mitem : m_buttomButtonList.keys()) {
+	//		mitem->setEnabled(true);
+	//	}
+	//});
+
     for (ModelPushButton* mitem: m_buttomButtonList.keys())
     {
 		//QByteArray tempBName = buttonName.toUtf8();
@@ -392,10 +404,16 @@ void ISelectYoloModelDialog::on_buttomButton_clicked(QString buttonName)
 			//sendModelCommand(currSelectButton, mitem->getStrModelName(),i );
 
 
-			// 发送命令
-			LY_AgriVideoPlayer::Get().updatejson(videoStreamId, mitem->getStrModelName(), i);
+			//// 发送命令
+			//LY_AgriVideoPlayer::Get().updatejson(videoStreamId, mitem->getStrModelName(), i);
 
-			qDebug() << "? 按钮点击处理完成";
+
+			//单个按钮的时间计时器
+			//mitem->setEnabled(false);
+			//QTimer::singleShot(1000, this, [mitem]() {
+			//	mitem->setEnabled(true);
+			//});
+			qDebug() << "->-按钮点击处理完成";
         }
     }
     m_allUAVYoloModelInfoMap[currSelectButton] = m_YoloModelInfoMap;

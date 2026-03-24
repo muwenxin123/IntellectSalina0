@@ -1,0 +1,12 @@
+#ifndef LY_TASKMANAGE_GLOBAL_H
+#define LY_TASKMANAGE_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(LY_TASKMANAGE_LIBRARY)
+    #define LY_TASKMANAGESHARED_EXPORT Q_DECL_EXPORT
+#else
+    #define LY_TASKMANAGESHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif

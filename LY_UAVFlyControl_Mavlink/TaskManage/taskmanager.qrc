@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/taskmanager">
+        <file>TaskManageMavCmdInfoCommon.json</file>
+    </qresource>
+</RCC>

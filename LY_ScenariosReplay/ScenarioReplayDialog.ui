@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ScenarioReplayDialog</class>
+ <widget class="QDialog" name="ScenarioReplayDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1208</width>
+    <height>892</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>数据重演</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_5">
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Replay Data</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QComboBox" name="cbxTablesList">
+     <property name="minimumSize">
+      <size>
+       <width>110</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>260</width>
+       <height>16777215</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2" rowspan="2">
+    <widget class="QGroupBox" name="gbxSendRecv">
+     <property name="title">
+      <string>发送接收</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="cbxSend">
+        <property name="text">
+         <string>发送</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="cbxRecv">
+        <property name="text">
+         <string>接收</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="3" rowspan="2">
+    <widget class="QGroupBox" name="gbxReplayMode">
+     <property name="title">
+      <string>重演模式</string>
+     </property>
+     <widget class="QRadioButton" name="rdbtnSest">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>22</y>
+        <width>47</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>席位</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rdbtnSystem">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>22</y>
+        <width>47</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>系统</string>
+      </property>
+     </widget>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>数据导入</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QPushButton" name="pbtnLoadDatabase">
+     <property name="text">
+      <string>Load Data</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="4">
+    <widget class="QGroupBox" name="gbxDateSet">
+     <property name="title">
+      <string>时间设置</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <widget class="QSplitter" name="splitter_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <widget class="QLabel" name="lbstartDate">
+         <property name="text">
+          <string>开始日期</string>
+         </property>
+        </widget>
+        <widget class="QDateEdit" name="dtEdtStart">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+        <widget class="QLabel" name="lbstartTime">
+         <property name="text">
+          <string>时间</string>
+         </property>
+        </widget>
+        <widget class="QTimeEdit" name="tmEdtStart">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+        <widget class="QLabel" name="lbendDate">
+         <property name="text">
+          <string>结束日期</string>
+         </property>
+        </widget>
+        <widget class="QDateEdit" name="dtEdtEnd">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+        <widget class="QLabel" name="lbendTime">
+         <property name="text">
+          <string>时间</string>
+         </property>
+        </widget>
+        <widget class="QTimeEdit" name="tmEdtEnd">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <layout class="QHBoxLayout" name="horLayoutRange"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="4">
+    <widget class="QGroupBox" name="gbxTypeSelect">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string>类型选取</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QSplitter" name="splitter_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <widget class="QCheckBox" name="chxTimeStat">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="text">
+          <string>时统数据</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="chxSysControl">
+         <property name="text">
+          <string>系统控制</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="chxSysRun">
+         <property name="text">
+          <string>系统运行</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="chxTrackData">
+         <property name="text">
+          <string>航迹数据</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="chxPlat">
+         <property name="text">
+          <string>无人平台</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="chxElectroPod">
+         <property name="text">
+          <string>光电吊舱</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="chxFireControl">
+         <property name="text">
+          <string>火控载荷</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="chxinfraredAim">
+         <property name="text">
+          <string>红外瞄具</string>
+         </property>
+        </widget>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QSplitter" name="splitter_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <widget class="QCheckBox" name="chxRadio">
+         <property name="text">
+          <string>通信电台</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="chxInterveneCMD">
+         <property name="text">
+          <string>干预命令</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="chxcmdMsg">
+         <property name="text">
+          <string>指挥文电</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="chxFileConvey">
+         <property name="text">
+          <string>文件传输</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="chxIntelligenceAssign">
+         <property name="text">
+          <string>情报分发</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="chxSysUpdate">
+         <property name="text">
+          <string>系统更新</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="chxPic">
+         <property name="text">
+          <string>图片信息</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="chxVideo">
+         <property name="text">
+          <string>视频信息</string>
+         </property>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="4">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string>重演数据</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QTableWidget" name="tableWidget"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="4">
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QPushButton" name="pbtnPlay">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>Play</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pbtnStop">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>Stop</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pbtnAccelerate">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>30</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>32</width>
+        <height>23</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>+</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pbtnDecelerate">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>30</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>32</width>
+        <height>23</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>-</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pbtnCustomRate">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>自定义速率</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lbRate">
+      <property name="text">
+       <string>Rate</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="ledtRate"/>
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Time</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="ledtTime"/>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="4">
+    <widget class="QProgressBar" name="pBar">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>20</height>
+      </size>
+     </property>
+     <property name="value">
+      <number>24</number>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

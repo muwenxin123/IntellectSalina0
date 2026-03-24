@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<AllAreas>
+    <Area Index="1">
+        <Point Index="1" Longitude="116.45614227859832" Latitude="40.153756101339461"/>
+        <Point Index="2" Longitude="116.45940742013606" Latitude="40.15379761244477"/>
+        <Point Index="3" Longitude="116.45917838768676" Latitude="40.152435588456427"/>
+        <Point Index="4" Longitude="116.45449872562378" Latitude="40.15228060738454"/>
+    </Area>
+</AllAreas>

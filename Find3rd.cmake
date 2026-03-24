@@ -1,0 +1,22 @@
+﻿FIND_PATH(3RD_INCLUDE_DIR zlib.h)
+
+macro(find_3rd_library)
+  foreach(_var ${ARGN})
+    string(TOUPPER ${_var} _varU)
+    find_library(${_varU}_LIBRARY_RELEASE NAMES ${_var})
+    find_library(${_varU}_LIBRARY_DEBUG NAMES ${_var}D)
+    set(${_varU}_LIBRARY ${${_varU}_LIBRARY_RELEASE})
+    if(${_varU}_LIBRARY_DEBUG)
+      set(${_varU}_LIBRARIES optimized ${${_varU}_LIBRARY_RELEASE} debug ${${_varU}_LIBRARY_DEBUG})
+    else()
+      set(${_varU}_LIBRARIES ${${_varU}_LIBRARY_RELEASE})
+    endif()
+    list(APPEND 3RDS_LIBRARIES ${${_varU}_LIBRARIES})
+  endforeach()
+endmacro()
+
+find_3rd_library(tiff libgeos)
+
+if (3RD_INCLUDE_DIR AND 3RD_LIBRARY)
+  set(3RD_FOUND TRUE)
+endif()
