@@ -21,3 +21,28 @@
 ---
 
 ## 系统架构
+LY_AgriVideoPlayer (主控制器)
+├── CameraWidget (视频窗口 ×5)
+├── AIWebSocketClient (WebSocket通信)
+├── DataResult (检测结果展示)
+├── EventRecord (事件记录)
+├── StatisticsCard (实时统计)
+└── UAVAgriVideoDialogList (视频布局)
+
+
+## 🚀 快速开始
+
+### 环境要求
+- Visual Studio 2015 或更高版本
+- Qt 5.11.2
+- Windows 7/10/11
+
+### 编译运行
+```bash
+# 1. 克隆项目
+git clone https://github.com/muwenxin123/IntellectSalina0.git
+
+# 2. 用 Visual Studio 打开解决方案
+IntellectSalina0.sln
+
+# 3. 编译运行（F5）
